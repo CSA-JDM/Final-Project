@@ -20,16 +20,59 @@ It will also need a time line of what you will have done and when.
 """
 import time
 import random
-import math
 import turtle
 
 
 class App:
     def __init__(self):
-        pass
+        self.screen = turtle.Screen()
+        turtle.tracer(0, 0)
+        self.turtle_ = turtle.Turtle()
+        self.turtle_.hideturtle()
+        self.turtle_.up()
+        self.turtle_.goto(30, -10)
+        self.turtle_.down()
+        typing = Type()
+        next_pos = typing.letter_a((-50, 0), 50)
+        typing.letter_a(next_pos, 50)
+        self.turtle_.write("Hello, world!", font=("Times New Roman", 30, "normal"))
+        turtle.update()
+        turtle.mainloop()
 
     def save(self):
         pass
+
+
+class Type:
+    def __init__(self):
+        self.turtle_ = turtle.Turtle()
+        self.turtle_.hideturtle()
+
+    def letter_a(self, position, size):
+        x_pos, y_pos = position[0], position[1]
+        self.turtle_.up()
+        self.turtle_.goto(x_pos, y_pos)
+        self.turtle_.down()
+        self.turtle_.left(70)
+        self.turtle_.forward(size)
+        top_a = self.turtle_.pos()
+        self.turtle_.right(140)
+        self.turtle_.forward(size+1)
+        new_pos = self.turtle_.pos()
+        self.turtle_.up()
+        self.turtle_.goto(x_pos+((top_a[0]-x_pos)/2), y_pos+((top_a[1]-y_pos)/2))
+        self.turtle_.down()
+        self.turtle_.left(70)
+        self.turtle_.forward((((top_a[0]-x_pos)*1.5)+((top_a[0]-x_pos)/2))/2)
+        return new_pos[0]+5, new_pos[1]+1
+
+    def letter_b(self, position, size):
+        x_pos, y_pos = position[0], position[1]
+        self.turtle_.up()
+        self.turtle_.goto(x_pos, y_pos)
+        self.turtle_.down()
+        self.turtle_.left(90)
+        self.turtle_.forward(size)
 
 
 class Character:
@@ -48,6 +91,11 @@ class Item:
 
 
 class Area:
+    def __init__(self):
+        pass
+
+
+class Audio:
     def __init__(self):
         pass
 
