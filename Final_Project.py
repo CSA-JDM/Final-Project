@@ -17,6 +17,9 @@ Look online for ideas as well.
 Proposal should be professional, slide show with examples.
 Must be an in depth description of what you want to do, why, what it will do, and how it is a useful program.
 It will also need a time line of what you will have done and when.
+
+PERSONAL NOTE: Mr. Davis said he wasn't expecting nor wanting visuals (that helps a lot).
+
 """
 import string
 import ctypes
@@ -31,16 +34,16 @@ class App:
         screensize = user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
 
         self.screen = Screen(self)
-        self.screen.main_window.screensize(screensize[0], screensize[1])
+        self.screen.main_window.setup(screensize[0], screensize[1], 0, 0)
         self.screen.main_window.tracer(0, 0)
         self.screen.main_window.title("In Memoriam")
         self.screen.main_window.onkey(self.screen.main_window.bye, "Escape")
 
         self.menu()
+        self.current_time()
 
         self.screen.main_window.listen()
         self.screen.main_window.update()
-        self.screen.write_turtle.showturtle()
         self.screen.main_window.mainloop()
 
     def menu(self):
@@ -50,10 +53,13 @@ class App:
         new_game_button = Button(self, position=(-380, 200), rect_sides=(130, 30, 130, 30), text="New Game")
         load_game_button = Button(self, position=(-380, 150), rect_sides=(135, 30, 135, 30), text="Load Game")
         quit_button = Button(self, position=(-380, 100), rect_sides=(60, 30, 60, 30), text="Quit")
-        buttons = [new_game_button, load_game_button, quit_button]
+        self.screen.buttons += [new_game_button, load_game_button, quit_button]
 
-        for button in buttons:
-            self.screen.main_window_canvas.bind("<Motion>", button.highlighter)
+        self.screen.main_window_canvas.bind("<Motion>", self.screen.highlighter)
+
+    def current_time(self):
+        full_time = time.asctime()
+        time_button = Button(self, position=(0, 0), rect_sides=(310, 30, 310, 30), text=full_time)
 
     def save(self):
         pass
@@ -69,6 +75,8 @@ class Screen:
         self.write_turtle.hideturtle()
         self.write_turtle.speed(0)
         self.write_turtle.up()
+        self.buttons = []
+        self.highlighted = [False, None]
 
     def check_pos_menu(self, x, y):
         if -380 < x < -255 and 200 < y < 230:
@@ -98,6 +106,25 @@ class Screen:
         if self.write_turtle.filling():
             self.write_turtle.end_fill()
 
+    def highlighter(self, event):
+        for button in self.buttons:
+            if button.position[0]+388 < event.x < button.position[0]+388+button.rect_sides[0] and \
+                    button.position[1]+100 < event.y < button.position[1]+100+button.rect_sides[1]:
+                ###
+                print(event.x, event.y)
+                print(button.position)
+                ###
+                self.draw_rect(position=(button.position[0]-5, button.position[1]), sides=button.rect_sides, fill=True)
+                self.write(position=button.position, text=button.text, font=button.font, color="white")
+                self.highlighted = [True, button]
+                break
+            else:
+                if self.highlighted == [True, button]:
+                    self.write_turtle.clear()
+                    self.app.menu()
+                    self.highlighted = [False, None]
+                    break
+
 
 class Button:
     def __init__(self, app, position=(0, 0), rect_sides=(0, 0, 0, 0), text="",
@@ -108,22 +135,9 @@ class Button:
         self.text = text
         self.font = font
         self.color = color
-        self.highlighted = False
 
         self.app.screen.write(position=self.position, text=self.text, font=self.font, color=self.color)
         self.app.screen.draw_rect(position=(position[0] - 5, position[1]), sides=self.rect_sides)
-
-    def highlighter(self, event):
-        if self.position[0]+388 < event.x < self.position[0]+388+self.rect_sides[0] and \
-                self.position[1]+100 < event.y < self.position[1]+100+self.rect_sides[1]:
-            self.app.screen.draw_rect(position=(self.position[0]-5, self.position[1]), sides=self.rect_sides, fill=True)
-            self.app.screen.write(position=self.position, text=self.text, font=self.font, color="white")
-            self.highlighted = True
-        else:
-            if self.highlighted is True:
-                self.app.screen.write_turtle.clear()
-                self.app.menu()
-                self.highlighted = False
 
 
 class TextBox:
