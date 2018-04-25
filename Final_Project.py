@@ -34,7 +34,9 @@ class App:
         self.screen.main_window.title("In Memoriam")
         self.screen.main_window.onkey(self.screen.main_window.bye, "Escape")
 
-        self.menu()
+        self.menu_state = self.menu()
+        self.text_box_state = False
+        self.username = None
         self.current_time()
 
         self.screen.main_window.listen()
@@ -51,10 +53,18 @@ class App:
         self.screen.buttons += [new_game_button, load_game_button, quit_button]
 
         self.screen.main_window_canvas.bind("<Motion>", self.screen.highlighter)
+        return True
 
     def current_time(self):
         full_time = time.asctime()
+        self.screen.main_window.reset()
+        if self.menu_state is True:
+            self.menu()
+        if self.text_box_state is True:
+            self.screen.write(position=(10, 95), text="Name:", font=("Times New Roman", 20, "normal"))
+            self.username.rect((60, 100), (300, 55, 300, 55))
         time_button = Button(self, position=(500, 1000), rect_sides=(180, 50, 180, 50), text=full_time)
+        self.screen.main_window.ontimer(self.current_time, 1000)
 
     def save(self):
         pass
@@ -69,19 +79,20 @@ class Screen:
         self.main_window.setup(1280, 720)
         self.main_window.setworldcoordinates(0, 1280, 720, 0)
 
-        self.write_turtle = turtle.Turtle()
-        self.write_turtle.hideturtle()
+        self.write_turtle = turtle.Turtle(visible=False)
         self.write_turtle.speed(0)
         self.write_turtle.up()
         self.buttons = []
 
     def check_pos_menu(self, x, y):
-        print(x, y)
+        # print(x, y)
         if 5 < x < 80 and 145 < y < 195:
             self.main_window.reset()
             self.write(position=(10, 95), text="Name:", font=("Times New Roman", 20, "normal"))
-            TextBox(self, (60, 100), (300, 55, 300, 55))
+            self.app.username = TextBox(self, (60, 100), (300, 55, 300, 55))
             self.main_window_canvas.unbind("<Motion>")
+            self.app.menu_state = False
+            self.app.text_box_state = True
 
     def write(self, position=(0, 0), text="", font=("Times New Roman", 30, "normal"), color="black"):
         self.write_turtle.color(color)
@@ -108,8 +119,8 @@ class Screen:
         for button in self.buttons:
             if button.position[0]+10 < event.x < (button.position[0]+button.rect_sides[0]) and \
                     button.position[1]/2 < event.y < (button.position[1]+button.rect_sides[1])/2:
-                print(event.x, event.y)
-                print(button.position)
+                # print(event.x, event.y)
+                # print(button.position)
                 self.draw_rect(position=(button.position[0]-5, button.position[1]), sides=button.rect_sides, fill=True)
                 self.write(position=button.position, text=button.text, font=button.font, color="white")
                 button.highlighted = True
@@ -139,15 +150,14 @@ class Button:
 class TextBox:
     def __init__(self, screen, position=(-5, 0), rect_sides=(0, 0, 0, 0)):
         self.screen = screen
-        self.type_turtle = turtle.Turtle()
-        self.type_turtle.hideturtle()
+        self.type_turtle = turtle.Turtle(visible=False)
         self.type_turtle.speed(0)
         self.type_turtle.up()
 
-        self.screen.draw_rect(position=position, sides=rect_sides)
-
         self.type_string = ""
         self.pos = position[0]+5, position[1]-5
+
+        self.rect(position, rect_sides)
 
         for letter in (f"{string.ascii_letters}{string.digits}" + "!@#$%^&*()_+?><:|[];',./\\{}=" + '"'):
             self.screen.main_window.onkey(
@@ -163,6 +173,9 @@ class TextBox:
 
         self.selector_state = False
         self.selector()
+
+    def rect(self, position, rect_sides):
+        self.screen.draw_rect(position=position, sides=rect_sides)
 
     def add_string(self, text="", font=("Times New Roman", 20, "normal")):
         self.type_string += text
@@ -225,5 +238,6 @@ class Audio:
         pass
 
 
-session = App()
-session.save()
+if __name__ == "__main__":
+    session = App()
+    session.save()
