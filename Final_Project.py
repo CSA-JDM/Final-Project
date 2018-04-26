@@ -151,10 +151,10 @@ class Screen:
                     button.position[1]-button.rect_sides[1] < event.y < button.position[1]:
                 if button.highlighted is not True:
                     button.text_text.clear()
-                    self.draw_rect(position=(button.position[0]-5, button.position[1]+3), sides=button.rect_sides, fill=True)
+                    self.draw_rect(position=(button.position[0]-5, button.position[1]+3), sides=button.rect_sides,
+                                   fill=True)
                     self.write(position=button.position, text=button.text, font=button.font, color="white")
                     button.highlighted = True
-                    break
                 break
             else:
                 if button.highlighted is True:
