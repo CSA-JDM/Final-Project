@@ -6,44 +6,6 @@
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Final_Project.py" beforeDir="false" afterPath="$PROJECT_DIR$/Final_Project.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Lib/tcl8.6/init.tcl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/Activate.ps1" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/_asyncio.pyd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/_bz2.pyd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/_ctypes.pyd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/_ctypes_test.pyd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/_decimal.pyd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/_elementtree.pyd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/_hashlib.pyd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/_lzma.pyd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/_msi.pyd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/_multiprocessing.pyd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/_overlapped.pyd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/_socket.pyd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/_sqlite3.pyd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/_ssl.pyd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/_testbuffer.pyd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/_testcapi.pyd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/_testconsole.pyd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/_testimportmultiple.pyd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/_testmultiphase.pyd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/_tkinter.pyd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/activate" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/activate.bat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/deactivate.bat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/pyexpat.pyd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/python.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/python3.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/python36.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/pythonw.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/select.pyd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/sqlite3.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/tcl86t.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/tk86t.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/unicodedata.pyd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/vcruntime140.dll" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/Scripts/winsound.pyd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/venv/pyvenv.cfg" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -53,7 +15,52 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
+    <leaf>
+      <file leaf-file-name="Final_Project.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Final_Project.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="364">
+              <caret line="304" lean-forward="true" selection-start-line="304" selection-end-line="304" />
+              <folding>
+                <element signature="e#70#1292#1" />
+                <element signature="e#1293#1306#0" expanded="true" />
+                <element signature="e#1364#3673#0" />
+                <element signature="e#1392#1851#0" />
+                <element signature="e#1916#2231#0" />
+                <element signature="e#1882#2542#0" />
+                <element signature="e#2875#3277#0" />
+                <element signature="e#3554#3863#0" />
+                <element signature="e#3540#3639#0" />
+                <element signature="e#3669#3673#0" />
+                <element signature="e#3694#6200#0" />
+                <element signature="e#3727#3979#0" />
+                <element signature="e#4025#4224#0" />
+                <element signature="e#4348#4626#0" />
+                <element signature="e#4737#5296#0" />
+                <element signature="e#5340#6200#0" />
+                <element signature="e#6221#6803#0" />
+                <element signature="e#6261#8550#0" />
+                <element signature="e#6340#7314#0" />
+                <element signature="e#7501#7563#0" />
+                <element signature="e#7509#7677#0" />
+                <element signature="e#7716#7929#0" />
+                <element signature="e#8303#8405#0" />
+                <element signature="e#8816#9499#0" />
+                <element signature="e#9403#9974#0" />
+                <element signature="e#9563#9958#0" />
+                <element signature="e#9531#9596#0" />
+                <element signature="e#9748#9974#0" />
+                <element signature="e#8574#8634#0" />
+                <element signature="e#8653#8685#0" />
+                <element signature="e#8704#9349#0" />
+                <element signature="e#9369#9401#0" />
+                <element signature="e#9435#9469#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -67,6 +74,8 @@
       <find>screen</find>
       <find>clear</find>
       <find>show</find>
+      <find>username</find>
+      <find>reset</find>
     </findStrings>
     <replaceStrings>
       <replace>self.screen</replace>
@@ -83,9 +92,9 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-8" />
-    <option name="y" value="-8" />
-    <option name="width" value="1616" />
+    <option name="x" value="28" />
+    <option name="y" value="-14" />
+    <option name="width" value="1540" />
     <option name="height" value="876" />
   </component>
   <component name="ProjectView">
@@ -93,6 +102,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -104,7 +114,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -161,35 +170,26 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <frame x="-8" y="-8" width="1616" height="876" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.500625" side_tool="true" weight="0.3298292" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.499375" visible="true" weight="0.32457292" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Python Console" order="7" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.499375" weight="0.32518598" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="7" sideWeight="0.499375" weight="0.32943678" />
-      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="bottom" id="Version Control" order="7" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.499375" visible="true" weight="0.32518598" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.500625" side_tool="true" weight="0.3298292" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Terminal" order="7" sideWeight="0.499375" weight="0.32943678" />
-      <window_info anchor="bottom" id="Python Console" order="7" />
     </layout>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -197,7 +197,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="2" />
+      <option name="time" value="3" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
@@ -206,7 +206,39 @@
         <state relative-caret-position="1496">
           <caret line="88" column="38" lean-forward="true" selection-start-line="88" selection-start-column="38" selection-end-line="88" selection-end-column="38" />
           <folding>
+            <element signature="e#70#1292#1" />
             <element signature="e#1293#1306#0" expanded="true" />
+            <element signature="e#1364#3673#0" />
+            <element signature="e#1392#1851#0" />
+            <element signature="e#1916#2231#0" />
+            <element signature="e#1882#2542#0" />
+            <element signature="e#2875#3277#0" />
+            <element signature="e#3554#3863#0" />
+            <element signature="e#3540#3639#0" />
+            <element signature="e#3669#3673#0" />
+            <element signature="e#3694#6200#0" />
+            <element signature="e#3727#3979#0" />
+            <element signature="e#4025#4224#0" />
+            <element signature="e#4348#4626#0" />
+            <element signature="e#4737#5296#0" />
+            <element signature="e#5340#6200#0" />
+            <element signature="e#6221#6803#0" />
+            <element signature="e#6261#8550#0" />
+            <element signature="e#6340#7314#0" />
+            <element signature="e#7501#7563#0" />
+            <element signature="e#7509#7677#0" />
+            <element signature="e#7716#7929#0" />
+            <element signature="e#8303#8405#0" />
+            <element signature="e#8816#9499#0" />
+            <element signature="e#9403#9974#0" />
+            <element signature="e#9563#9958#0" />
+            <element signature="e#9531#9596#0" />
+            <element signature="e#9748#9974#0" />
+            <element signature="e#8574#8634#0" />
+            <element signature="e#8653#8685#0" />
+            <element signature="e#8704#9349#0" />
+            <element signature="e#9369#9401#0" />
+            <element signature="e#9435#9469#0" />
           </folding>
         </state>
       </provider>
@@ -216,7 +248,39 @@
         <state relative-caret-position="1020">
           <caret line="60" column="80" selection-start-line="60" selection-start-column="80" selection-end-line="60" selection-end-column="80" />
           <folding>
+            <element signature="e#70#1292#1" />
             <element signature="e#1293#1306#0" expanded="true" />
+            <element signature="e#1364#3673#0" />
+            <element signature="e#1392#1851#0" />
+            <element signature="e#1916#2231#0" />
+            <element signature="e#1882#2542#0" />
+            <element signature="e#2875#3277#0" />
+            <element signature="e#3554#3863#0" />
+            <element signature="e#3540#3639#0" />
+            <element signature="e#3669#3673#0" />
+            <element signature="e#3694#6200#0" />
+            <element signature="e#3727#3979#0" />
+            <element signature="e#4025#4224#0" />
+            <element signature="e#4348#4626#0" />
+            <element signature="e#4737#5296#0" />
+            <element signature="e#5340#6200#0" />
+            <element signature="e#6221#6803#0" />
+            <element signature="e#6261#8550#0" />
+            <element signature="e#6340#7314#0" />
+            <element signature="e#7501#7563#0" />
+            <element signature="e#7509#7677#0" />
+            <element signature="e#7716#7929#0" />
+            <element signature="e#8303#8405#0" />
+            <element signature="e#8816#9499#0" />
+            <element signature="e#9403#9974#0" />
+            <element signature="e#9563#9958#0" />
+            <element signature="e#9531#9596#0" />
+            <element signature="e#9748#9974#0" />
+            <element signature="e#8574#8634#0" />
+            <element signature="e#8653#8685#0" />
+            <element signature="e#8704#9349#0" />
+            <element signature="e#9369#9401#0" />
+            <element signature="e#9435#9469#0" />
           </folding>
         </state>
       </provider>
@@ -338,7 +402,39 @@
         <state relative-caret-position="791">
           <caret line="230" lean-forward="true" selection-start-line="230" selection-end-line="230" />
           <folding>
+            <element signature="e#70#1292#1" />
             <element signature="e#1293#1306#0" expanded="true" />
+            <element signature="e#1364#3673#0" />
+            <element signature="e#1392#1851#0" />
+            <element signature="e#1916#2231#0" />
+            <element signature="e#1882#2542#0" />
+            <element signature="e#2875#3277#0" />
+            <element signature="e#3554#3863#0" />
+            <element signature="e#3540#3639#0" />
+            <element signature="e#3669#3673#0" />
+            <element signature="e#3694#6200#0" />
+            <element signature="e#3727#3979#0" />
+            <element signature="e#4025#4224#0" />
+            <element signature="e#4348#4626#0" />
+            <element signature="e#4737#5296#0" />
+            <element signature="e#5340#6200#0" />
+            <element signature="e#6221#6803#0" />
+            <element signature="e#6261#8550#0" />
+            <element signature="e#6340#7314#0" />
+            <element signature="e#7501#7563#0" />
+            <element signature="e#7509#7677#0" />
+            <element signature="e#7716#7929#0" />
+            <element signature="e#8303#8405#0" />
+            <element signature="e#8816#9499#0" />
+            <element signature="e#9403#9974#0" />
+            <element signature="e#9563#9958#0" />
+            <element signature="e#9531#9596#0" />
+            <element signature="e#9748#9974#0" />
+            <element signature="e#8574#8634#0" />
+            <element signature="e#8653#8685#0" />
+            <element signature="e#8704#9349#0" />
+            <element signature="e#9369#9401#0" />
+            <element signature="e#9435#9469#0" />
           </folding>
         </state>
       </provider>
@@ -471,10 +567,42 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Final_Project.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="417">
-          <caret line="239" lean-forward="true" selection-start-line="239" selection-end-line="239" />
+        <state relative-caret-position="364">
+          <caret line="304" lean-forward="true" selection-start-line="304" selection-end-line="304" />
           <folding>
+            <element signature="e#70#1292#1" />
             <element signature="e#1293#1306#0" expanded="true" />
+            <element signature="e#1364#3673#0" />
+            <element signature="e#1392#1851#0" />
+            <element signature="e#1916#2231#0" />
+            <element signature="e#1882#2542#0" />
+            <element signature="e#2875#3277#0" />
+            <element signature="e#3554#3863#0" />
+            <element signature="e#3540#3639#0" />
+            <element signature="e#3669#3673#0" />
+            <element signature="e#3694#6200#0" />
+            <element signature="e#3727#3979#0" />
+            <element signature="e#4025#4224#0" />
+            <element signature="e#4348#4626#0" />
+            <element signature="e#4737#5296#0" />
+            <element signature="e#5340#6200#0" />
+            <element signature="e#6221#6803#0" />
+            <element signature="e#6261#8550#0" />
+            <element signature="e#6340#7314#0" />
+            <element signature="e#7501#7563#0" />
+            <element signature="e#7509#7677#0" />
+            <element signature="e#7716#7929#0" />
+            <element signature="e#8303#8405#0" />
+            <element signature="e#8816#9499#0" />
+            <element signature="e#9403#9974#0" />
+            <element signature="e#9563#9958#0" />
+            <element signature="e#9531#9596#0" />
+            <element signature="e#9748#9974#0" />
+            <element signature="e#8574#8634#0" />
+            <element signature="e#8653#8685#0" />
+            <element signature="e#8704#9349#0" />
+            <element signature="e#9369#9401#0" />
+            <element signature="e#9435#9469#0" />
           </folding>
         </state>
       </provider>

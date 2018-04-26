@@ -17,9 +17,6 @@ Look online for ideas as well.
 Proposal should be professional, slide show with examples.
 Must be an in depth description of what you want to do, why, what it will do, and how it is a useful program.
 It will also need a time line of what you will have done and when.
-
-PERSONAL NOTE: Mr. Davis said he wasn't expecting nor wanting visuals (that helps a lot).
-
 """
 import string
 import turtle
@@ -30,41 +27,70 @@ import random
 class App:
     def __init__(self):
         self.screen = Screen(self)
-        self.screen.main_window.tracer(0, 0)
+        self.screen.main_window.tracer(False)
         self.screen.main_window.title("In Memoriam")
         self.screen.main_window.onkey(self.screen.main_window.bye, "Escape")
 
         self.menu_state = self.menu()
-        self.text_box_state = False
-        self.username = None
-        self.current_time()
+
+        self.username_state = False
+        self.username_ = None
+
+        self.main_sequence_state = False
+        self.main_sequence_text = None
+
+        self.main_loop()
 
         self.screen.main_window.listen()
         self.screen.main_window.update()
         self.screen.main_window.mainloop()
 
+    def main_loop(self):
+        self.screen.main_window.resetscreen()
+        for turtle_ in self.screen.main_window.turtles():
+            turtle_.hideturtle()
+        if self.menu_state is True:
+            self.menu()
+        if self.username_state is True:
+            self.username()
+        if self.main_sequence_state is True:
+            self.main_sequence()
+        self.current_time()
+        self.screen.main_window.ontimer(self.main_loop, 500)
+
     def menu(self):
-        self.screen.write(position=(10, 100), text="In Memoriam", font=("Times New Roman", 30, "bold"))
+        title_text = self.screen.write(position=(10, 50), text="In Memoriam", font=("Times New Roman", 30, "bold"))
         self.screen.main_window.onclick(self.screen.check_pos_menu)
 
-        new_game_button = Button(self, position=(10, 200), rect_sides=(75, 50, 75, 50), text="New Game")
-        load_game_button = Button(self, position=(10, 300), rect_sides=(80, 50, 80, 50), text="Load Game")
-        quit_button = Button(self, position=(10, 400), rect_sides=(40, 50, 40, 50), text="Quit")
+        new_game_button = Button(self, position=(10, 150), rect_sides=(130, 30, 130, 30), text="New Game")
+        load_game_button = Button(self, position=(10, 225), rect_sides=(135, 30, 135, 30), text="Load Game")
+        quit_button = Button(self, position=(10, 300), rect_sides=(60, 30, 60, 30), text="Quit")
         self.screen.buttons += [new_game_button, load_game_button, quit_button]
 
         self.screen.main_window_canvas.bind("<Motion>", self.screen.highlighter)
         return True
 
+    def username(self):
+        if self.username_state is False:
+            self.username_ = TextInput(self.screen, (100, 50), (315, 30, 315, 30))
+            self.menu_state = False
+            self.username_state = True
+        self.screen.write(position=(10, 45), text="Name:", font=("Times New Roman", 20, "normal"))
+        self.username_.rect()
+        self.username_.update()
+        self.screen.main_window_canvas.unbind("<Motion>")
+        self.screen.main_window.onkey(self.main_sequence, "Return")
+
+    def main_sequence(self):
+        if self.main_sequence_state is False:
+            self.username_state = False
+            self.username_.active = False
+            self.main_sequence_text = TextBox(self.screen, (100, 500), (1000, 1000, 1000, 1000), "Hello, world!")
+            self.main_sequence_state = True
+        self.main_sequence_text.update()
+
     def current_time(self):
-        full_time = time.asctime()
-        self.screen.main_window.reset()
-        if self.menu_state is True:
-            self.menu()
-        if self.text_box_state is True:
-            self.screen.write(position=(10, 95), text="Name:", font=("Times New Roman", 20, "normal"))
-            self.username.rect((60, 100), (300, 55, 300, 55))
-        time_button = Button(self, position=(500, 1000), rect_sides=(180, 50, 180, 50), text=full_time)
-        self.screen.main_window.ontimer(self.current_time, 1000)
+        time_button = Button(self, position=(960, 710), rect_sides=(315, 30, 315, 30), text=time.asctime())
 
     def save(self):
         pass
@@ -77,59 +103,65 @@ class Screen:
         self.main_window_canvas = self.main_window.getcanvas()
 
         self.main_window.setup(1280, 720)
-        self.main_window.setworldcoordinates(0, 1280, 720, 0)
+        self.main_window.setworldcoordinates(0, 720, 1280, 0)
 
-        self.write_turtle = turtle.Turtle(visible=False)
-        self.write_turtle.speed(0)
-        self.write_turtle.up()
         self.buttons = []
 
     def check_pos_menu(self, x, y):
-        # print(x, y)
-        if 5 < x < 80 and 145 < y < 195:
-            self.main_window.reset()
-            self.write(position=(10, 95), text="Name:", font=("Times New Roman", 20, "normal"))
-            self.app.username = TextBox(self, (60, 100), (300, 55, 300, 55))
-            self.main_window_canvas.unbind("<Motion>")
-            self.app.menu_state = False
-            self.app.text_box_state = True
+        if 10 < x < 140 and 120 < y < 150:
+            self.app.username()
+            self.main_window.resetscreen()
+            for turtle_ in self.main_window.turtles():
+                turtle_.hideturtle()
 
-    def write(self, position=(0, 0), text="", font=("Times New Roman", 30, "normal"), color="black"):
-        self.write_turtle.color(color)
-        self.write_turtle.up()
-        self.write_turtle.goto(position)
-        self.write_turtle.write(text, font=font, move=True)
+    @staticmethod
+    def write(position=(0, 0), text="", font=("Times New Roman", 30, "normal"), color="black"):
+        write_turtle = turtle.Turtle(visible=False)
+        write_turtle.speed(0)
+        write_turtle.up()
+        write_turtle.color(color)
+        write_turtle.up()
+        write_turtle.goto(position)
+        write_turtle.write(text, font=font, move=True)
+        return write_turtle
 
-    def draw_rect(self, position=(0, 0), sides=(0, 0, 0, 0), color="black", fill=False):
-        self.write_turtle.color(color)
+    @staticmethod
+    def draw_rect(position=(0, 0), sides=(0, 0, 0, 0), color="black", fill=False):
+        write_turtle = turtle.Turtle(visible=False)
+        write_turtle.speed(0)
+        write_turtle.up()
+        write_turtle.color(color)
         if fill is True:
-            self.write_turtle.begin_fill()
-        self.write_turtle.seth(0)
-        self.write_turtle.up()
-        self.write_turtle.goto(position[0], position[1]-5)
-        self.write_turtle.down()
+            write_turtle.begin_fill()
+        write_turtle.seth(0)
+        write_turtle.up()
+        write_turtle.goto(position[0], position[1]-5)
+        write_turtle.down()
         for side in sides:
-            self.write_turtle.forward(side)
-            self.write_turtle.right(90)
-        self.write_turtle.up()
-        if self.write_turtle.filling():
-            self.write_turtle.end_fill()
+            write_turtle.forward(side)
+            write_turtle.right(90)
+        write_turtle.up()
+        if write_turtle.filling():
+            write_turtle.end_fill()
+        return write_turtle
 
     def highlighter(self, event):
         for button in self.buttons:
-            if button.position[0]+10 < event.x < (button.position[0]+button.rect_sides[0]) and \
-                    button.position[1]/2 < event.y < (button.position[1]+button.rect_sides[1])/2:
-                # print(event.x, event.y)
-                # print(button.position)
-                self.draw_rect(position=(button.position[0]-5, button.position[1]), sides=button.rect_sides, fill=True)
-                self.write(position=button.position, text=button.text, font=button.font, color="white")
-                button.highlighted = True
+            if button.position[0] < event.x < button.position[0]+button.rect_sides[0] and \
+                    button.position[1]-button.rect_sides[1] < event.y < button.position[1]:
+                if button.highlighted is not True:
+                    button.text_text.clear()
+                    self.draw_rect(position=(button.position[0]-5, button.position[1]+3), sides=button.rect_sides, fill=True)
+                    self.write(position=button.position, text=button.text, font=button.font, color="white")
+                    button.highlighted = True
+                    break
                 break
             else:
                 if button.highlighted is True:
-                    self.write_turtle.clear()
+                    self.main_window.resetscreen()
                     self.app.menu()
                     button.highlighted = False
+                    break
 
 
 class Button:
@@ -143,11 +175,11 @@ class Button:
         self.color = color
         self.highlighted = False
 
-        self.app.screen.write(position=self.position, text=self.text, font=self.font, color=self.color)
-        self.app.screen.draw_rect(position=(position[0]-5, position[1]), sides=self.rect_sides)
+        self.text_text = self.app.screen.write(position=self.position, text=self.text, font=self.font, color=self.color)
+        self.rect = self.app.screen.draw_rect(position=(position[0]-5, position[1]+3), sides=self.rect_sides)
 
 
-class TextBox:
+class TextInput:
     def __init__(self, screen, position=(-5, 0), rect_sides=(0, 0, 0, 0)):
         self.screen = screen
         self.type_turtle = turtle.Turtle(visible=False)
@@ -155,9 +187,12 @@ class TextBox:
         self.type_turtle.up()
 
         self.type_string = ""
+        self.orig_position = position
+        self.rect_sides = rect_sides
         self.pos = position[0]+5, position[1]-5
+        self.active = True
 
-        self.rect(position, rect_sides)
+        self.rect_ = self.rect()
 
         for letter in (f"{string.ascii_letters}{string.digits}" + "!@#$%^&*()_+?><:|[];',./\\{}=" + '"'):
             self.screen.main_window.onkey(
@@ -174,8 +209,8 @@ class TextBox:
         self.selector_state = False
         self.selector()
 
-    def rect(self, position, rect_sides):
-        self.screen.draw_rect(position=position, sides=rect_sides)
+    def rect(self):
+        return self.screen.draw_rect(position=self.orig_position, sides=self.rect_sides)
 
     def add_string(self, text="", font=("Times New Roman", 20, "normal")):
         self.type_string += text
@@ -183,24 +218,51 @@ class TextBox:
         self.type_turtle.clear()
         self.type_turtle.write(self.type_string, font=font, move=True)
 
-    def delete_string(self):
+    def delete_string(self, font=("Times New Roman", 20, "normal")):
         self.type_string = self.type_string[:-1]
         self.type_turtle.goto(self.pos)
         self.type_turtle.clear()
-        self.type_turtle.write(self.type_string, font=("Times New Roman", 20, "normal"), move=True)
+        self.type_turtle.write(self.type_string, font=font, move=True)
+
+    def update(self, font=("Times New Roman", 20, "normal")):
+        self.type_turtle.goto(self.pos)
+        self.type_turtle.clear()
+        self.type_turtle.write(self.type_string, font=font, move=True)
 
     def selector(self):
-        if self.selector_state is False:
-            self.type_turtle.goto(self.pos)
-            self.type_turtle.clear()
-            self.type_turtle.write(self.type_string+"|", font=("Times New Roman", 20, "normal"), move=True)
-            self.selector_state = True
-        elif self.selector_state is True:
-            self.type_turtle.goto(self.pos)
-            self.type_turtle.clear()
-            self.type_turtle.write(self.type_string, font=("Times New Roman", 20, "normal"), move=True)
-            self.selector_state = False
-        self.screen.main_window.ontimer(self.selector, 500)
+        if self.active is True:
+            if self.selector_state is False:
+                self.type_turtle.goto(self.pos)
+                self.type_turtle.clear()
+                self.type_turtle.write(self.type_string+"|", font=("Times New Roman", 20, "normal"), move=True)
+                self.selector_state = True
+            elif self.selector_state is True:
+                self.type_turtle.goto(self.pos)
+                self.type_turtle.clear()
+                self.type_turtle.write(self.type_string, font=("Times New Roman", 20, "normal"), move=True)
+                self.selector_state = False
+            self.screen.main_window.ontimer(self.selector, 500)
+
+
+class TextBox:
+    def __init__(self, screen, position=(-5, 0), rect_sides=(0, 0, 0, 0), text="",
+                 font=("Times New Roman", 20, "normal"), color="black"):
+        self.screen = screen
+        self.position = position
+        self.rect_sides = rect_sides
+        self.text = text
+        self.font = font
+        self.color = color
+
+        self.text_text = self.screen.write(position=self.position, text=self.text, font=self.font, color=self.color)
+        self.rect = self.screen.draw_rect(position=(position[0] - 5, position[1] + 3), sides=self.rect_sides)
+
+    def rect(self):
+        return self.screen.draw_rect(position=self.position, sides=self.rect_sides)
+
+    def update(self):
+        self.text_text = self.screen.write(position=self.position, text=self.text, font=self.font, color=self.color)
+        self.rect = self.screen.draw_rect(position=(self.position[0] - 5, self.position[1] + 3), sides=self.rect_sides)
 
 
 class Character:
@@ -216,8 +278,7 @@ class Item:
 class Area:
     def __init__(self, screen):
         self.screen = screen
-        self.draw_turtle = turtle.Turtle()
-        self.draw_turtle.hideturtle()
+        self.draw_turtle = turtle.Turtle(visible=False)
         self.draw_turtle.up()
 
     def draw_tree(self, position=(0, 0)):
