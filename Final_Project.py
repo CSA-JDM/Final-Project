@@ -43,6 +43,7 @@ class App:
 
         self.main_sequence_state = False
         self.main_sequence_text = None
+        self.main_sequence_type = None
 
         self.main_loop()
 
@@ -128,6 +129,8 @@ class Screen:
             self.main_window.resetscreen()
             for turtle_ in self.main_window.turtles():
                 turtle_.hideturtle()
+        elif 10 < x < 70 and 270 < y < 300:
+            self.app.screen.main_window.bye()
 
     @staticmethod
     def write(position=(0, 0), text="", font=("Times New Roman", 30, "normal"), color="black"):
