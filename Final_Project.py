@@ -22,6 +22,7 @@ import string
 import turtle
 import time
 import random
+import mp3play
 
 
 class App:
@@ -30,6 +31,10 @@ class App:
         self.screen.main_window.tracer(False)
         self.screen.main_window.title("In Memoriam")
         self.screen.main_window.onkey(self.screen.main_window.bye, "Escape")
+
+        sayo_nara = Audio(r'C:\Users\Jacob\Documents\GitHub\Final-Project\Sayo-nara.mp3')
+        sayo_nara.play()
+        self.screen.main_window.ontimer(sayo_nara.play, 157000)
 
         self.menu_state = None
 
@@ -80,8 +85,7 @@ class App:
             self.username_ = TextInput(self.screen, (100, 50), (315, 30, 315, 30))
             self.menu_state = False
             self.username_state = True
-        self.screen.write(position=(10, 45), text="Name:", font=("Times New Roman", 20, "normal"))
-        self.username_.rect()
+        self.screen.write(position=(10, 48), text="Name:", font=("Times New Roman", 20, "normal"))
         self.username_.update()
         self.screen.main_window_canvas.unbind("<Motion>")
         self.screen.main_window.onkey(self.main_sequence, "Return")
@@ -91,9 +95,11 @@ class App:
             self.username_state = False
             self.username_.active = False
             self.main_sequence_text = TextBox(self.screen, (100, 500), (1000, 1000, 1000, 1000),
-                                              f"Hello, {self.username_.type_string}")
+                                              f"Hello, {self.username_.type_string}, and welcome to 'In Memoriam.'")
+            self.main_sequence_type = TextInput(self.screen, (100, 530), (1000, 30, 1000, 30))
             self.main_sequence_state = True
-        self.main_sequence_text.update()
+        self.main_sequence_text.update(self.main_sequence_type.type_string)
+        self.main_sequence_type.update()
 
     def current_time(self):
         time_button = Button(self, position=(960, 710), rect_sides=(315, 30, 315, 30), text=time.asctime())
@@ -159,11 +165,11 @@ class Screen:
             self.x = event.x
             self.y = event.y
         for button in self.buttons:
-            if button.position[0] < self.x < button.position[0]+button.rect_sides[0] and \
-                    button.position[1]-button.rect_sides[1] < self.y < button.position[1]:
+            if button.position[0]*2 < self.x < (button.position[0]*2)+button.rect_sides[0] and \
+                    (button.position[1]+5)-button.rect_sides[1] < self.y < button.position[1]+5:
                 button.text_text.clear()
                 self.draw_rect(position=(button.position[0]-5, button.position[1]+3), sides=button.rect_sides,
-                                fill=True)
+                               fill=True)
                 self.write(position=button.position, text=button.text, font=button.font, color="white")
                 button.highlighted = True
                 break
@@ -194,7 +200,8 @@ class Button:
             self.app.screen.highlighter()
             self.app.current_time()
         else:
-            self.text_text = self.app.screen.write(position=self.position, text=self.text, font=self.font, color=self.color)
+            self.text_text = self.app.screen.write(position=self.position, text=self.text, font=self.font,
+                                                   color=self.color)
             self.rect = self.app.screen.draw_rect(position=(self.position[0] - 5, self.position[1] + 3),
                                                   sides=self.rect_sides)
 
@@ -209,10 +216,11 @@ class TextInput:
         self.type_string = ""
         self.orig_position = position
         self.rect_sides = rect_sides
-        self.pos = position[0]+5, position[1]-5
+        self.pos = position[0]+2, position[1]-3
         self.active = True
 
-        self.rect_ = self.rect()
+        self.rect_ = self.screen.draw_rect(position=(self.orig_position[0]-5, self.orig_position[1]+3),
+                                           sides=self.rect_sides)
 
         for letter in (f"{string.ascii_letters}{string.digits}" + "!@#$%^&*()_+?><:|[];',./\\{}=" + '"'):
             self.screen.main_window.onkey(
@@ -229,25 +237,25 @@ class TextInput:
         self.selector_state = False
         self.selector()
 
-    def rect(self):
-        return self.screen.draw_rect(position=self.orig_position, sides=self.rect_sides)
-
     def add_string(self, text="", font=("Times New Roman", 20, "normal")):
-        self.type_string += text
-        self.type_turtle.goto(self.pos)
-        self.type_turtle.clear()
-        self.type_turtle.write(self.type_string, font=font, move=True)
+        if self.active is True:
+            self.type_string += text
+            self.type_turtle.goto(self.pos)
+            self.type_turtle.clear()
+            self.type_turtle.write(self.type_string, font=font, move=True)
 
     def delete_string(self, font=("Times New Roman", 20, "normal")):
-        self.type_string = self.type_string[:-1]
-        self.type_turtle.goto(self.pos)
-        self.type_turtle.clear()
-        self.type_turtle.write(self.type_string, font=font, move=True)
+        if self.active is True:
+            self.type_string = self.type_string[:-1]
+            self.type_turtle.goto(self.pos)
+            self.type_turtle.clear()
+            self.type_turtle.write(self.type_string, font=font, move=True)
 
     def update(self, font=("Times New Roman", 20, "normal")):
         self.type_turtle.goto(self.pos)
         self.type_turtle.clear()
         self.type_turtle.write(self.type_string, font=font, move=True)
+        self.screen.draw_rect(position=(self.orig_position[0]-5, self.orig_position[1]+3), sides=self.rect_sides)
 
     def selector(self):
         if self.active is True:
@@ -274,14 +282,14 @@ class TextBox:
         self.font = font
         self.color = color
 
-        self.text_text = self.screen.write(position=self.position, text=self.text, font=self.font, color=self.color)
+        self.text_text = self.screen.write(position=(self.position[0]+2, self.position[1]-3), text=self.text,
+                                           font=self.font, color=self.color)
         self.rect = self.screen.draw_rect(position=(position[0] - 5, position[1] + 3), sides=self.rect_sides)
 
-    def rect(self):
-        return self.screen.draw_rect(position=self.position, sides=self.rect_sides)
-
-    def update(self):
-        self.text_text = self.screen.write(position=self.position, text=self.text, font=self.font, color=self.color)
+    def update(self, text):
+        self.text += f"\n{text}"
+        self.text_text = self.screen.write(position=(self.position[0]+2, self.position[1]-3), text=self.text,
+                                           font=self.font, color=self.color)
         self.rect = self.screen.draw_rect(position=(self.position[0] - 5, self.position[1] + 3), sides=self.rect_sides)
 
 
@@ -315,8 +323,11 @@ class Area:
 
 
 class Audio:
-    def __init__(self):
-        pass
+    def __init__(self, file):
+        self.file = mp3play.load(file)
+
+    def play(self):
+        self.file.play()
 
 
 if __name__ == "__main__":
