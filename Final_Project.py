@@ -27,110 +27,149 @@ import mp3play
 
 class App:
     def __init__(self):
-        self.screen = Screen(self)
-        self.screen.main_window.tracer(False)
-        self.screen.main_window.title("In Memoriam")
-        self.screen.main_window.onkey(self.screen.main_window.bye, "Escape")
+        self.screen = Screen(self, "In Memoriam")
+        self.start_time = time.time()
+        self.frame_counter = 0
 
         sayo_nara = Audio(r'C:\Users\Jacob\Documents\GitHub\Final-Project\Sayo-nara.mp3')
         sayo_nara.play()
         self.screen.main_window.ontimer(sayo_nara.play, 157000)
 
-        self.menu_state = None
-
-        self.username_state = False
-        self.username_ = None
-
-        self.main_sequence_state = False
-        self.main_sequence_text = None
-        self.main_sequence_type = None
-
+        self.menu()
         self.main_loop()
 
         self.screen.main_window.listen()
-        self.screen.main_window.update()
         self.screen.main_window.mainloop()
 
-    def main_loop(self):
-        self.screen.main_window.resetscreen()
-        for turtle_ in self.screen.main_window.turtles():
-            turtle_.hideturtle()
-        if self.menu_state is not False:
-            self.menu()
-        if self.username_state is True:
-            self.username()
-        if self.main_sequence_state is True:
-            self.main_sequence()
+    def main_loop(self, loop=True):
+        self.frame_counter += 1
+        # self.screen.main_window_canvas.delete("all")
+        refresher = self.screen.main_window_canvas.create_rectangle(0, 0, 1280, 720, width=0, fill="white")
+        # turtles = self.screen.main_window.turtles()
+        # for _ in range(len(turtles)):
+        #    turtles[0].clear()
+        #    del turtles[0]
+        for button_ in self.screen.buttons:
+            button_.update()
+        for text_box_ in self.screen.text_boxes:
+            text_box_.update()
+        for text_input_ in self.screen.text_inputs:
+            self.screen.text_inputs[text_input_].update()
         self.current_time()
-        self.screen.main_window.ontimer(self.main_loop, 500)
+        print(round(self.frame_counter/(time.time()-self.start_time)))
+        items = self.screen.main_window_canvas.find_all()
+        for item in items[:items.index(refresher)+1]:
+            self.screen.main_window_canvas.delete(item)
+        if loop is True:
+            self.screen.main_window.ontimer(self.main_loop, 1)
 
     def menu(self):
-        if self.menu_state is None:
-            title_text = self.screen.write(position=(10, 50), text="In Memoriam", font=("Times New Roman", 30, "bold"))
-            self.screen.main_window.onclick(self.screen.check_pos_menu)
+        self.screen.clear_all()
+        self.screen.text_boxes += [TextBox(self.screen, position=(10, 50), text="In Memoriam",
+                                           font=("Times New Roman", 30, "bold"))]
 
-            new_game_button = Button(self, position=(10, 150), rect_sides=(130, 30, 130, 30), text="New Game")
-            load_game_button = Button(self, position=(10, 225), rect_sides=(135, 30, 135, 30), text="Load Game")
-            quit_button = Button(self, position=(10, 300), rect_sides=(60, 30, 60, 30), text="Quit")
-            self.screen.buttons += [new_game_button, load_game_button, quit_button]
+        self.screen.buttons += [Button(self, position=(10, 150), rect_sides=(130, 30, 130, 30), text="New Game")]
+        self.screen.buttons += [Button(self, position=(10, 225), rect_sides=(135, 30, 135, 30), text="Load Game")]
+        self.screen.buttons += [Button(self, position=(10, 300), rect_sides=(60, 30, 60, 30), text="Quit")]
 
-            self.screen.main_window_canvas.bind("<Motion>", self.screen.highlighter)
-            self.menu_state = True
-        elif self.menu_state is True:
-            for button_ in self.screen.buttons:
-                button_.update()
-            title_text = self.screen.write(position=(10, 50), text="In Memoriam", font=("Times New Roman", 30, "bold"))
+        self.screen.main_window.onclick(lambda x, y: self.screen.check_pos(x, y, ((10, 140), (120, 150)),
+                                                                           self.new_game))
+        self.screen.main_window.onclick(lambda x, y: self.screen.check_pos(x, y, ((10, 145), (195, 225)),
+                                                                           self.load_game), add=True)
+        self.screen.main_window.onclick(lambda x, y: self.screen.check_pos(x, y, ((10, 70), (270, 300)),
+                                                                           self.screen.main_window.bye), add=True)
+        self.screen.main_window_canvas.bind("<Motion>", self.screen.highlighter)
 
     def username(self):
-        if self.username_state is False:
-            self.username_ = TextInput(self.screen, (100, 50), (315, 30, 315, 30))
-            self.menu_state = False
-            self.username_state = True
-        self.screen.write(position=(10, 48), text="Name:", font=("Times New Roman", 20, "normal"))
-        self.username_.update()
-        self.screen.main_window_canvas.unbind("<Motion>")
+        self.screen.text_inputs["username"] = TextInput(self.screen, (100, 52), (315, 30, 315, 30))
+        self.screen.text_boxes += [TextBox(self.screen, position=(10, 50), text="Name:",
+                                           font=("Times New Roman", 20, "normal"))]
+        self.screen.buttons += [Button(self, position=(960, 650), rect_sides=(135, 30, 135, 30), text="Load Game")]
+        self.screen.buttons += [Button(self, position=(1100, 650), rect_sides=(60, 30, 60, 30), text="Quit")]
+
+        self.screen.main_window.onclick(lambda x, y: self.screen.check_pos(x, y, ((960, 1095), (620, 650)),
+                                                                           self.load_game))
+        self.screen.main_window.onclick(lambda x, y: self.screen.check_pos(x, y, ((1100, 1170), (620, 650)),
+                                                                           self.screen.main_window.bye))
+
         self.screen.main_window.onkey(self.main_sequence, "Return")
 
     def main_sequence(self):
-        if self.main_sequence_state is False:
-            self.username_state = False
-            self.username_.active = False
-            self.main_sequence_text = TextBox(self.screen, (100, 500), (1000, 1000, 1000, 1000),
-                                              f"Hello, {self.username_.type_string}, and welcome to 'In Memoriam.'")
-            self.main_sequence_type = TextInput(self.screen, (100, 530), (1000, 30, 1000, 30))
-            self.main_sequence_state = True
-        self.main_sequence_text.update(self.main_sequence_type.type_string)
-        self.main_sequence_type.update()
+        self.screen.main_window.onkey(None, "Return")
+        username = self.screen.text_inputs["username"].type_string
+        self.screen.text_inputs["username"].active = False
+        self.screen.clear_all()
+        self.screen.buttons += [Button(self, position=(960, 650), rect_sides=(135, 30, 135, 30), text="Load Game")]
+        self.screen.buttons += [Button(self, position=(1100, 650), rect_sides=(60, 30, 60, 30), text="Quit")]
+        self.screen.text_boxes += [TextBox(self.screen, (100, 550), (1000, 500, 1000, 500),
+                                           f'Hello, {username}, '
+                                           'and welcome to "In Memoriam."')]
+        self.screen.text_inputs["user input"] = TextInput(self.screen, (100, 580), (1000, 30, 1000, 30))
 
     def current_time(self):
-        time_button = Button(self, position=(960, 710), rect_sides=(315, 30, 315, 30), text=time.asctime())
+        TextBox(self.screen, position=(960, 710), rect_sides=(310, 30, 310, 30), text=time.asctime())
+
+    def new_game(self):
+        self.screen.clear_all()
+        self.username()
+        self.screen.main_window.resetscreen()
+        for turtle_ in self.screen.main_window.turtles():
+            turtle_.hideturtle()
+
+    def load_game(self):
+        pass
 
     def save(self):
         pass
 
 
 class Screen:
-    def __init__(self, app):
+    def __init__(self, app, title):
         self.app = app
         self.main_window = turtle.Screen()
         self.main_window_canvas = self.main_window.getcanvas()
 
-        self.main_window.setup(1280, 720)
+        self.main_window.setup(1280, 720, starty=40)
         self.main_window.setworldcoordinates(0, 720, 1280, 0)
+        self.main_window.tracer(False)
+        self.main_window.title(title)
+        self.main_window.onkey(self.main_window.bye, "Escape")
 
         self.x = 0
         self.y = 0
 
         self.buttons = []
+        self.text_boxes = []
+        self.text_inputs = {}
 
-    def check_pos_menu(self, x, y):
-        if 10 < x < 140 and 120 < y < 150:
-            self.app.username()
-            self.main_window.resetscreen()
-            for turtle_ in self.main_window.turtles():
-                turtle_.hideturtle()
-        elif 10 < x < 70 and 270 < y < 300:
-            self.app.screen.main_window.bye()
+    def highlighter(self, event=None):
+        if event is not None:
+            self.x = event.x
+            self.y = event.y
+        for button in self.buttons:
+            if button.position[0] < self.x < button.position[0]+button.rect_sides[0] and \
+                    button.position[1]-button.rect_sides[1] < self.y < button.position[1]:
+                button.text_text.clear()
+                button.rect.clear()
+                button.text_text = self.draw_rect(position=(button.position[0]-5, button.position[1]+3),
+                                                  sides=button.rect_sides, fill=True)
+                button.rect = self.write(position=button.position, text=button.text, font=button.font, color="white")
+                button.highlighted = True
+                break
+            else:
+                if button.highlighted is True:
+                    self.main_window.resetscreen()
+                    button.highlighted = False
+                    break
+
+    def clear_all(self):
+        turtles = self.main_window.turtles()
+        for _ in range(len(turtles)):
+            turtles[0].clear()
+            del turtles[0]
+        self.buttons = []
+        self.text_boxes = []
+        self.text_inputs = {}
 
     @staticmethod
     def write(position=(0, 0), text="", font=("Times New Roman", 30, "normal"), color="black"):
@@ -163,25 +202,10 @@ class Screen:
             write_turtle.end_fill()
         return write_turtle
 
-    def highlighter(self, event=None):
-        if event is not None:
-            self.x = event.x
-            self.y = event.y
-        for button in self.buttons:
-            if button.position[0]*2 < self.x < (button.position[0]*2)+button.rect_sides[0] and \
-                    (button.position[1]+5)-button.rect_sides[1] < self.y < button.position[1]+5:
-                button.text_text.clear()
-                self.draw_rect(position=(button.position[0]-5, button.position[1]+3), sides=button.rect_sides,
-                               fill=True)
-                self.write(position=button.position, text=button.text, font=button.font, color="white")
-                button.highlighted = True
-                break
-            else:
-                if button.highlighted is True:
-                    self.main_window.resetscreen()
-                    button.highlighted = False
-                    self.app.menu()
-                    break
+    @staticmethod
+    def check_pos(x, y, cords, func):
+        if cords[0][0] < x < cords[0][1] and cords[1][0] < y < cords[1][1]:
+            func()
 
 
 class Button:
@@ -289,8 +313,7 @@ class TextBox:
                                            font=self.font, color=self.color)
         self.rect = self.screen.draw_rect(position=(position[0] - 5, position[1] + 3), sides=self.rect_sides)
 
-    def update(self, text):
-        self.text += f"\n{text}"
+    def update(self):
         self.text_text = self.screen.write(position=(self.position[0]+2, self.position[1]-3), text=self.text,
                                            font=self.font, color=self.color)
         self.rect = self.screen.draw_rect(position=(self.position[0] - 5, self.position[1] + 3), sides=self.rect_sides)
