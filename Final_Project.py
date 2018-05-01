@@ -43,20 +43,18 @@ class App:
 
     def main_loop(self, loop=True):
         self.frame_counter += 1
-        # self.screen.main_window_canvas.delete("all")
-        refresher = self.screen.main_window_canvas.create_rectangle(0, 0, 1280, 720, width=0, fill="white")
-        # turtles = self.screen.main_window.turtles()
-        # for _ in range(len(turtles)):
-        #    turtles[0].clear()
-        #    del turtles[0]
-        for button_ in self.screen.buttons:
-            button_.update()
-        for text_box_ in self.screen.text_boxes:
-            text_box_.update()
-        for text_input_ in self.screen.text_inputs:
-            self.screen.text_inputs[text_input_].update()
+        del self.screen.main_window.turtles()[:]
+        refresher = self.screen.main_window_canvas.create_rectangle(0, 0, 1280, 720, width=0, fill="white", state="hidden")
+        self.screen.update_list = [self.screen.buttons, self.screen.text_boxes, self.screen.text_inputs]
+        for list_ in self.screen.update_list:
+            for item in list_:
+                if isinstance(item, str):
+                    list_[item].update()
+                else:
+                    item.update()
         self.current_time()
-        print(round(self.frame_counter/(time.time()-self.start_time)))
+        if self.frame_counter % 100 == 0:
+            print(round(self.frame_counter/(time.time()-self.start_time)))
         items = self.screen.main_window_canvas.find_all()
         for item in items[:items.index(refresher)+1]:
             self.screen.main_window_canvas.delete(item)
@@ -84,12 +82,12 @@ class App:
         self.screen.text_inputs["username"] = TextInput(self.screen, (100, 52), (315, 30, 315, 30))
         self.screen.text_boxes += [TextBox(self.screen, position=(10, 50), text="Name:",
                                            font=("Times New Roman", 20, "normal"))]
-        self.screen.buttons += [Button(self, position=(960, 650), rect_sides=(135, 30, 135, 30), text="Load Game")]
-        self.screen.buttons += [Button(self, position=(1100, 650), rect_sides=(60, 30, 60, 30), text="Quit")]
+        self.screen.buttons += [Button(self, position=(915, 710), rect_sides=(135, 30, 135, 30), text="Load Game")]
+        self.screen.buttons += [Button(self, position=(1060, 710), rect_sides=(60, 30, 60, 30), text="Quit")]
 
-        self.screen.main_window.onclick(lambda x, y: self.screen.check_pos(x, y, ((960, 1095), (620, 650)),
+        self.screen.main_window.onclick(lambda x, y: self.screen.check_pos(x, y, ((915, 1050), (680, 710)),
                                                                            self.load_game))
-        self.screen.main_window.onclick(lambda x, y: self.screen.check_pos(x, y, ((1100, 1170), (620, 650)),
+        self.screen.main_window.onclick(lambda x, y: self.screen.check_pos(x, y, ((1060, 1120), (680, 710)),
                                                                            self.screen.main_window.bye))
 
         self.screen.main_window.onkey(self.main_sequence, "Return")
@@ -99,15 +97,21 @@ class App:
         username = self.screen.text_inputs["username"].type_string
         self.screen.text_inputs["username"].active = False
         self.screen.clear_all()
-        self.screen.buttons += [Button(self, position=(960, 650), rect_sides=(135, 30, 135, 30), text="Load Game")]
-        self.screen.buttons += [Button(self, position=(1100, 650), rect_sides=(60, 30, 60, 30), text="Quit")]
+        self.screen.buttons += [Button(self, position=(915, 710), rect_sides=(135, 30, 135, 30), text="Load Game")]
+        self.screen.buttons += [Button(self, position=(1060, 710), rect_sides=(60, 30, 60, 30), text="Quit")]
         self.screen.text_boxes += [TextBox(self.screen, (100, 550), (1000, 500, 1000, 500),
-                                           f'Hello, {username}, '
-                                           'and welcome to "In Memoriam."')]
+                                           f'Hello, {username}, and welcome to "In Memoriam."')]
         self.screen.text_inputs["user input"] = TextInput(self.screen, (100, 580), (1000, 30, 1000, 30))
 
     def current_time(self):
-        TextBox(self.screen, position=(960, 710), rect_sides=(310, 30, 310, 30), text=time.asctime())
+        the_time = time.localtime()
+        year, month, day, hour, minute, second = the_time[0:6]
+        if len(str(minute)) < 2:
+            minute = "0" + str(minute)
+        if len(str(second)) < 2:
+            second = "0" + str(second)
+        TextBox(self.screen, position=(1130, 710), rect_sides=(135, 65, 135, 65), text=f" {hour}:{minute}:{second}\n"
+                                                                                       f"{month}/{day}/{year}")
 
     def new_game(self):
         self.screen.clear_all()
@@ -141,6 +145,7 @@ class Screen:
         self.buttons = []
         self.text_boxes = []
         self.text_inputs = {}
+        self.update_list = [self.buttons, self.text_boxes, self.text_inputs]
 
     def highlighter(self, event=None):
         if event is not None:
@@ -225,7 +230,6 @@ class Button:
     def update(self):
         if self.highlighted is True:
             self.app.screen.highlighter()
-            self.app.current_time()
         else:
             self.text_text = self.app.screen.write(position=self.position, text=self.text, font=self.font,
                                                    color=self.color)
@@ -250,16 +254,16 @@ class TextInput:
                                            sides=self.rect_sides)
 
         for letter in (f"{string.ascii_letters}{string.digits}" + "!@#$%^&*()_+?><:|[];',./\\{}=" + '"'):
-            self.screen.main_window.onkey(
+            self.screen.main_window.onkeypress(
                 lambda letter_=letter: self.add_string(letter_, font=("Times New Roman", 20, "normal")), letter
             )
-        self.screen.main_window.onkey(
+        self.screen.main_window.onkeypress(
             lambda space="space": self.add_string(" ", font=("Times New Roman", 20, "normal")), "space"
         )
-        self.screen.main_window.onkey(
+        self.screen.main_window.onkeypress(
             lambda minus="minus": self.add_string("-", font=("Times New Roman", 20, "normal")), "minus"
         )
-        self.screen.main_window.onkey(self.delete_string, "BackSpace")
+        self.screen.main_window.onkeypress(self.delete_string, "BackSpace")
 
         self.selector_state = False
         self.selector()
