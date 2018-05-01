@@ -31,9 +31,9 @@ class App:
         self.start_time = time.time()
         self.frame_counter = 0
 
-        sayo_nara = Audio(r'C:\Users\Jacob\Documents\GitHub\Final-Project\Sayo-nara.mp3')
-        sayo_nara.play()
-        self.screen.main_window.ontimer(sayo_nara.play, 157000)
+        # sayo_nara = Audio(r'C:\Users\Jacob\Documents\GitHub\Final-Project\Sayo-nara.mp3')
+        # sayo_nara.play()
+        # self.screen.main_window.ontimer(sayo_nara.play, 157000)
 
         self.menu()
         self.main_loop()
@@ -102,19 +102,29 @@ class App:
         self.screen.text_boxes += [TextBox(self.screen, (100, 550), (1000, 500, 1000, 500),
                                            f'Hello, {username}, and welcome to "In Memoriam."')]
         self.screen.text_inputs["user input"] = TextInput(self.screen, (100, 580), (1000, 30, 1000, 30))
+        self.screen.main_window.onkey(lambda: [
+            self.screen.text_boxes[0].update(self.screen.text_inputs["user input"].type_string),
+            self.screen.text_inputs["user input"].clear()
+            ],
+                                      "Return")
 
     def current_time(self):
         the_time = time.localtime()
-        year, month, day, hour, minute, second = the_time[0:6]
+        year, month, day, hour, minute, second = the_time[:6]
         if len(str(minute)) < 2:
             minute = "0" + str(minute)
         if len(str(second)) < 2:
             second = "0" + str(second)
-        TextBox(self.screen, position=(1130, 710), rect_sides=(135, 65, 135, 65), text=f" {hour}:{minute}:{second}\n"
+        if len(str(month)) < 2:
+            month = "0" + str(month)
+        if len(str(day)) < 2:
+            day = "0" + str(day)
+        TextBox(self.screen, position=(1130, 710), rect_sides=(140, 65, 140, 65), text=f"  {hour}:{minute}:{second}\n"
                                                                                        f"{month}/{day}/{year}")
 
     def new_game(self):
         self.screen.clear_all()
+        self.screen.main_window.onclick(None)
         self.username()
         self.screen.main_window.resetscreen()
         for turtle_ in self.screen.main_window.turtles():
@@ -288,6 +298,9 @@ class TextInput:
         self.type_turtle.write(self.type_string, font=font, move=True)
         self.screen.draw_rect(position=(self.orig_position[0]-5, self.orig_position[1]+3), sides=self.rect_sides)
 
+    def clear(self):
+        self.type_string = ""
+
     def selector(self):
         if self.active is True:
             if self.selector_state is False:
@@ -317,7 +330,9 @@ class TextBox:
                                            font=self.font, color=self.color)
         self.rect = self.screen.draw_rect(position=(position[0] - 5, position[1] + 3), sides=self.rect_sides)
 
-    def update(self):
+    def update(self, extra=""):
+        if extra != "":
+            self.text += f"\n{extra}"
         self.text_text = self.screen.write(position=(self.position[0]+2, self.position[1]-3), text=self.text,
                                            font=self.font, color=self.color)
         self.rect = self.screen.draw_rect(position=(self.position[0] - 5, self.position[1] + 3), sides=self.rect_sides)
