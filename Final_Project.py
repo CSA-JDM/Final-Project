@@ -61,19 +61,19 @@ class App:
                 self.screen.main_window.onclick(
                     lambda x, y:
                     [
-                        self.screen.check_pos(x, y, ((10, 140), (120, 150)), menu.inverse),
+                        self.screen.check_pos(x, y, ((10, 140), (120, 150)), lambda: setattr(menu, "state", False)),
                         self.screen.check_pos(x, y, ((10, 145), (195, 225)), self.load_game),
-                        self.screen.check_pos(x, y, ((10, 70), (270, 300)), loop.inverse)
+                        self.screen.check_pos(x, y, ((10, 70), (270, 300)), lambda: setattr(loop, "state", False))
                     ]
                 )
                 self.screen.main_window_canvas.bind("<Motion>", lambda event: self.screen.highlighter(
                     buttons=(new_button, load_button, quit_button), event=event))
-                menu.deployed = True
+                setattr(menu, "deployed", True)
 
             # Username portion
             if menu.state is False:
                 if username.deployed is False:
-                    self.screen.main_window.resetscreen()
+                    self.screen.main_window_canvas.delete("all")
                     username_input = TextInput(self.screen, (100, 52), (315, 30, 315, 30))
                     name_label = TextBox(self.screen, position=(10, 50), text="Name:",
                                          font=("Times New Roman", 20, "normal"))
@@ -85,12 +85,13 @@ class App:
                         lambda x, y:
                         [
                             self.screen.check_pos(x, y, ((915, 1050), (680, 710)), self.load_game),
-                            self.screen.check_pos(x, y, ((1060, 1120), (680, 710)), loop.inverse)
+                            self.screen.check_pos(x, y, ((1060, 1120), (680, 710)),
+                                                  lambda: setattr(loop, "state", False))
                         ],
                         add=False
                     )
-                    self.screen.main_window.onkey(username.inverse, "Return")
-                    username.deployed = True
+                    self.screen.main_window.onkey(lambda: setattr(username, "state", False), "Return")
+                    setattr(username, "deployed", True)
 
                 # Main sequence portion
                 if username.state is False:
@@ -100,7 +101,7 @@ class App:
                         quit_button.update()
                         self.screen.main_window.onkey(None, "Return")
                         inputted_username = username_input.type_string
-                        username_input.active = False
+                        setattr(username_input, "active", False)
                         main_textbox = TextBox(self.screen, (100, 550), (1000, 500, 1000, 500),
                                                f'Hello, {inputted_username}, and welcome to "In Memoriam."')
                         main_input = TextInput(self.screen, (100, 580), (1000, 30, 1000, 30))
@@ -110,17 +111,17 @@ class App:
                                 main_input.clear()
                             ],
                             "Return")
-                        main_sequence.deployed = True
+                        setattr(main_sequence, "deployed", True)
 
             if self.frame_counter % 100 == 0:
                 print(round(self.frame_counter/(time.time()-self.start_time)))
             self.screen.main_window.listen()
 
     def current_time(self):
-        self.time_label.text_text.clear()
-        self.time_label.rect.clear()
         the_time = time.localtime()
         year, month, day, hour, minute, second = the_time[:6]
+        if len(str(hour)) < 2:
+            hour = "0" + str(hour)
         if len(str(minute)) < 2:
             minute = "0" + str(minute)
         if len(str(second)) < 2:
@@ -129,9 +130,12 @@ class App:
             month = "0" + str(month)
         if len(str(day)) < 2:
             day = "0" + str(day)
-        self.time_label = TextBox(self.screen, position=(1130, 710),
-                                  rect_sides=(140, 65, 140, 65), text=f"  {hour}:{minute}:{second}\n"
-                                                                      f"{month}/{day}/{year}")
+        if the_time[:6] != self.time_label.text.split(":") + self.time_label.text.split("/"):
+            self.time_label.text_text.clear()
+            self.time_label.rect.clear()
+            self.time_label = TextBox(self.screen, position=(1130, 710),
+                                      rect_sides=(140, 65, 140, 65), text=f"  {hour}:{minute}:{second}\n"
+                                                                          f"{month}/{day}/{year}")
 
     def load_game(self):
         pass
@@ -148,35 +152,22 @@ class Screen:
 
         self.main_window.setup(1280, 720, starty=40)
         self.main_window.setworldcoordinates(0, 720, 1280, 0)
-        self.main_window.tracer(False)
+        self.main_window.tracer(0, 0)
         self.main_window.title(title)
         self.main_window.onkey(self.main_window.bye, "Escape")
 
-        self.x = 0
-        self.y = 0
-
-    def highlighter(self, buttons, event=None):
-        if event is not None:
-            self.x = event.x
-            self.y = event.y
+    @staticmethod
+    def highlighter(buttons, event):
         for button in buttons:
-            if button.position[0] < self.x < button.position[0]+button.rect_sides[0] and \
-                    button.position[1]-button.rect_sides[1] < self.y < button.position[1]:
-                button.text_text.clear()
-                button.rect.clear()
-                button.rect = self.draw_rect(position=(button.position[0]-5, button.position[1]+3),
-                                             sides=button.rect_sides, fill=True)
-                button.text_text = self.write(position=button.position, text=button.text, font=button.font,
-                                              color="white")
-                button.highlighted = True
+            if button.position[0] < event.x < button.position[0]+button.rect_sides[0] and \
+                    button.position[1]-button.rect_sides[1] < event.y < button.position[1]:
+                if button.highlighted is False:
+                    button.update(fill=True, color="white")
+                    setattr(button, "highlighted", True)
             else:
                 if button.highlighted is True:
-                    button.text_text.clear()
-                    button.rect.clear()
-                    button.rect = self.draw_rect(position=(button.position[0] - 5, button.position[1] + 3),
-                                                 sides=button.rect_sides)
-                    button.text_text = self.write(position=button.position, text=button.text, font=button.font)
-                    button.highlighted = False
+                    button.update()
+                    setattr(button, "highlighted", False)
 
     @staticmethod
     def write(position=(0, 0), text="", font=("Times New Roman", 30, "normal"), color="black"):
@@ -212,7 +203,10 @@ class Screen:
     @staticmethod
     def check_pos(x, y, cords, func):
         if cords[0][0] < x < cords[0][1] and cords[1][0] < y < cords[1][1]:
-            func()
+            try:
+                func()
+            except TypeError:
+                pass
 
 
 class Button:
@@ -229,16 +223,14 @@ class Button:
         self.text_text = self.app.screen.write(position=self.position, text=self.text, font=self.font, color=self.color)
         self.rect = self.app.screen.draw_rect(position=(self.position[0]-5, self.position[1]+3), sides=self.rect_sides)
 
-    def update(self):
-        if self.highlighted is True:
-            self.app.screen.highlighter()
-        else:
-            self.text_text.clear()
-            self.rect.clear()
-            self.text_text = self.app.screen.write(position=self.position, text=self.text, font=self.font,
-                                                   color=self.color)
-            self.rect = self.app.screen.draw_rect(position=(self.position[0] - 5, self.position[1] + 3),
-                                                  sides=self.rect_sides)
+    def update(self, fill=False, color="black"):
+        self.text_text.clear()
+        self.rect.clear()
+        setattr(self, "rect", self.app.screen.draw_rect(position=(self.position[0] - 5,
+                                                                  self.position[1] + 3),
+                                                        sides=self.rect_sides, fill=fill))
+        setattr(self, "text_text", self.app.screen.write(position=self.position, text=self.text,
+                                                         font=self.font, color=color))
 
     def move_to(self, position):
         self.position = position
@@ -349,12 +341,6 @@ class Status:
     def __init__(self):
         self.state = True
         self.deployed = False
-
-    def inverse(self):
-        if self.state is True:
-            self.state = False
-        elif self.state is False:
-            self.state = True
 
 
 class Character:

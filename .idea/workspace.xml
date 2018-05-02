@@ -17,8 +17,8 @@
       <file leaf-file-name="Final_Project.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Final_Project.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="336">
-              <caret line="105" column="67" lean-forward="true" selection-start-line="105" selection-start-column="67" selection-end-line="105" selection-end-column="67" />
+            <state relative-caret-position="352">
+              <caret line="237" lean-forward="true" selection-start-line="237" selection-end-line="237" />
               <folding>
                 <element signature="n#!!doc" />
                 <element signature="e#70#1200#1" />
@@ -46,6 +46,9 @@
       <find>random</find>
       <find>reset</find>
       <find>mainloop</find>
+      <find>rect</find>
+      <find>text_text</find>
+      <find>del</find>
     </findStrings>
     <replaceStrings>
       <replace>self.screen</replace>
@@ -63,7 +66,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="28" />
     <option name="y" value="-14" />
     <option name="width" value="1540" />
@@ -190,19 +193,19 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <frame x="-8" y="-8" width="1616" height="876" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.500625" side_tool="true" weight="0.3298292" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.499375" visible="true" weight="0.3209352" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Python Console" order="7" weight="0.3298292" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.499375" visible="true" weight="0.32063076" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="7" sideWeight="0.499375" weight="0.32837406" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.39947438" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -221,13 +224,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Final_Project.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1122">
-          <caret line="66" column="26" selection-start-line="66" selection-start-column="26" selection-end-line="66" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Final_Project.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="408">
@@ -561,10 +557,17 @@
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/site-packages/mp3play/__init__.py" />
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/site-packages/mp3play/windows.py" />
     <entry file="file://$PROJECT_DIR$/test.py" />
+    <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/tkinter/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="212">
+          <caret line="2466" column="22" lean-forward="true" selection-start-line="2466" selection-start-column="22" selection-end-line="2466" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Final_Project.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="336">
-          <caret line="105" column="67" lean-forward="true" selection-start-line="105" selection-start-column="67" selection-end-line="105" selection-end-column="67" />
+        <state relative-caret-position="352">
+          <caret line="237" lean-forward="true" selection-start-line="237" selection-end-line="237" />
           <folding>
             <element signature="n#!!doc" />
             <element signature="e#70#1200#1" />
