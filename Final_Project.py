@@ -29,12 +29,12 @@ class App:
     def __init__(self):
         self.screen = Screen(self, "In Memoriam")
 
-        sayo_nara = Audio(r'C:\Users\Jacob\Documents\GitHub\Final-Project\Sayo-nara.mp3')
-        sayo_nara.play()
-        self.screen.main_window.ontimer(sayo_nara.play, 157000)
+        # sayo_nara = Audio(r'C:\Users\Jacob\Documents\GitHub\Final-Project\Sayo-nara.mp3')
+        # sayo_nara.play()
+        # self.screen.main_window.ontimer(sayo_nara.play, 157000)
 
-        the_time = time.localtime()
-        year, month, day, hour, minute, second = the_time[:6]
+        start_ltime = time.localtime()
+        year, month, day, hour, minute, second = start_ltime[:6]
         self.time_label = TextBox(self.screen, position=(1130, 710),
                                   rect_sides=(140, 65, 140, 65), text=f"  {hour}:{minute}:{second}\n"
                                                                       f"{month}/{day}/{year}")
@@ -46,7 +46,7 @@ class App:
         username = Status()
         main_sequence = Status()
 
-        while loop.state is True:
+        while loop.state:
             self.frame_counter += 1
             self.current_time()
 
@@ -74,6 +74,9 @@ class App:
             if menu.state is False:
                 if username.deployed is False:
                     self.screen.main_window_canvas.delete("all")
+                    total_turtles = self.screen.main_window.turtles()
+                    del [total_turtles[total_turtles.index(new_button.rect)],
+                         total_turtles[total_turtles.index(new_button.text_text)]]
                     username_input = TextInput(self.screen, (100, 52), (315, 30, 315, 30))
                     name_label = TextBox(self.screen, position=(10, 50), text="Name:",
                                          font=("Times New Roman", 20, "normal"))
@@ -96,7 +99,7 @@ class App:
                 # Main sequence portion
                 if username.state is False:
                     if main_sequence.deployed is False:
-                        self.screen.main_window.resetscreen()
+                        self.screen.main_window_canvas.delete("all")
                         load_button.update()
                         quit_button.update()
                         self.screen.main_window.onkey(None, "Return")
@@ -116,6 +119,7 @@ class App:
             if self.frame_counter % 100 == 0:
                 print(round(self.frame_counter/(time.time()-self.start_time)))
             self.screen.main_window.listen()
+            self.screen.main_window.update()
 
     def current_time(self):
         the_time = time.localtime()
@@ -132,7 +136,10 @@ class App:
             day = "0" + str(day)
         if the_time[:6] != self.time_label.text.split(":") + self.time_label.text.split("/"):
             self.time_label.text_text.clear()
-            self.time_label.rect.clear()
+            self.screen.main_window_canvas.delete(self.time_label.rect)
+            total_turtles = self.screen.main_window.turtles()
+            del [total_turtles[total_turtles.index(self.time_label.rect)],
+                 total_turtles[total_turtles.index(self.time_label.text_text)]]
             self.time_label = TextBox(self.screen, position=(1130, 710),
                                       rect_sides=(140, 65, 140, 65), text=f"  {hour}:{minute}:{second}\n"
                                                                           f"{month}/{day}/{year}")
@@ -203,10 +210,7 @@ class Screen:
     @staticmethod
     def check_pos(x, y, cords, func):
         if cords[0][0] < x < cords[0][1] and cords[1][0] < y < cords[1][1]:
-            try:
                 func()
-            except TypeError:
-                pass
 
 
 class Button:
