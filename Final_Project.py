@@ -31,14 +31,15 @@ class App:
         self.screen = Screen(self, "In Memoriam")
 
         # Audio
-        sayo_nara = Audio(r'C:\Users\Jacob\Documents\GitHub\Final-Project\Sayo-nara.mp3')
-        sayo_nara.play()
-        self.screen.main_window.ontimer(sayo_nara.play, 157000)
+        # sayo_nara = Audio(r'C:\Users\Jacob\Documents\GitHub\Final-Project\Sayo-nara.mp3')
+        # sayo_nara.play()
+        # self.screen.main_window.ontimer(sayo_nara.play, 157000)
 
         # Initial Time Update
         self.time_label = None
         self.time_update()
 
+        # Main Loop
         self.frame_counter = 0
         self.start_time = time.time()
 
@@ -46,6 +47,9 @@ class App:
         self.menu = Status()
         self.username = Status()
         self.main_sequence = Status()
+
+        # Initial Frame Update
+        self.frame_box = TextBox(self.screen, position=(1195, 30), rect_sides=(75, 35, 75, 35), text="0")
 
         self.buttons = {}
         self.text_boxes = {}
@@ -68,8 +72,12 @@ class App:
                         self.time_update()
                         self.main_sequence_()
 
-            # if self.frame_counter % 100 == 0:
-            #     print(round(self.frame_counter/(time.time()-self.start_time)))
+            if f"{round(self.frame_counter/(time.time()-self.start_time))}" != self.frame_box.text:
+                self.screen.main_window_canvas.delete(self.frame_box.text_text_item)
+                self.screen.main_window_canvas.delete(self.frame_box.rect_item)
+                self.frame_box = TextBox(self.screen, position=(1195, 30),
+                                         rect_sides=(75, 35, 75, 35),
+                                         text=f"{round(self.frame_counter/(time.time()-self.start_time))}")
 
             self.screen.main_window.listen()
             self.screen.main_window.update()
@@ -90,8 +98,10 @@ class App:
                 del time_str[msrmnt]
         if f"  {time_str[3]}:{time_str[4]}:{time_str[5]}\n{time_str[1]}/{time_str[2]}/{time_str[0]}" !=\
                 self.time_label.text:
+            # print(self.screen.main_window_canvas.find_all())
             self.screen.main_window_canvas.delete(self.time_label.text_text_item)
             self.screen.main_window_canvas.delete(self.time_label.rect_item)
+            # print(self.screen.main_window_canvas.find_all())
             self.time_label.text_text.clear()
             total_turtles = self.screen.main_window.turtles()
             del [total_turtles[total_turtles.index(self.time_label.rect)],
@@ -287,6 +297,7 @@ class TextInput:
 
         self.rect_ = self.screen.draw_rect(position=(self.orig_position[0]-5, self.orig_position[1]+3),
                                            sides=self.rect_sides)
+        self.rect_item = self.screen.main_window_canvas.find_all()[-1]
 
         for letter in (f"{string.ascii_letters}{string.digits}" + "!@#$%^&*()_+?><:|[];',./\\{}=" + '"'):
             self.screen.main_window.onkeypress(
@@ -328,16 +339,16 @@ class TextInput:
 
     def selector(self):
         if self.active is True:
-            if self.selector_state is False:
+            if self.selector_state is True:
                 self.type_turtle.goto(self.pos)
                 self.type_turtle.clear()
                 self.type_turtle.write(self.type_string+"|", font=("Times New Roman", 20, "normal"), move=True)
-                self.selector_state = True
-            elif self.selector_state is True:
+                self.selector_state = False
+            elif self.selector_state is False:
                 self.type_turtle.goto(self.pos)
                 self.type_turtle.clear()
                 self.type_turtle.write(self.type_string, font=("Times New Roman", 20, "normal"), move=True)
-                self.selector_state = False
+                self.selector_state = True
             self.screen.main_window.ontimer(self.selector, 500)
 
     def move_to(self, position):
