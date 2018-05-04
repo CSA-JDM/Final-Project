@@ -116,20 +116,11 @@ class App:
         TextBox(self.screen, position=(10, 50), text="In Memoriam", font=("Times New Roman", 30, "bold"))
 
         self.buttons["new_button"] = Button(self.screen, position=(10, 150), rect_sides=(130, 30, 130, 30),
-                                            text="New Game")
+                                            text="New Game", command=lambda: setattr(self.menu, "state", False))
         self.buttons["load_button"] = Button(self.screen, position=(10, 225), rect_sides=(135, 30, 135, 30),
-                                             text="Load Game")
+                                             text="Load Game", command=self.load_game)
         self.buttons["quit_button"] = Button(self.screen, position=(10, 300), rect_sides=(60, 30, 60, 30),
-                                             text="Quit")
-
-        self.screen.main_window.onclick(
-            lambda x, y:
-            [
-                CanvasObject.check_pos(x, y, ((10, 140), (120, 150)), lambda: setattr(self.menu, "state", False)),
-                CanvasObject.check_pos(x, y, ((10, 145), (195, 225)), self.load_game),
-                CanvasObject.check_pos(x, y, ((10, 70), (270, 300)), lambda: setattr(self.loop, "state", False))
-            ]
-        )
+                                             text="Quit", command=lambda: setattr(self.loop, "state", False))
         self.screen.main_window_canvas.bind("<Motion>", lambda event: Button.highlighter(
             buttons=(self.buttons.items()), event=event))
         setattr(self.menu, "deployed", True)
@@ -144,8 +135,8 @@ class App:
         self.text_boxes["name_label"] = TextBox(self.screen, position=(10, 50), text="Name:",
                                                 font=("Times New Roman", 20, "normal"))
         self.text_inputs["username_input"] = TextInput(self.screen, (100, 52), (315, 30, 315, 30))
-        self.buttons["load_button"].move_to((915, 710))
-        self.buttons["quit_button"].move_to((1060, 710))
+        self.buttons["load_button"].move_to((915, 710), command=self.load_game)
+        self.buttons["quit_button"].move_to((1060, 710), command=lambda: setattr(self.loop, "state", False))
         self.screen.main_window_canvas.bind("<Motion>", lambda event: Button.highlighter(
             buttons=(self.buttons.items()), event=event), add=False)
         self.screen.main_window.onclick(
@@ -219,13 +210,18 @@ class CanvasObject:
         self.rect = self.draw_rect(position=(self.position[0] - 5, self.position[1] + 3), sides=self.rect_sides)
         self.rect_item = self.screen.main_window_canvas.find_all()[-1]
 
-    def update(self, fill=False, color="black", text=""):
+    def update(self, fill=False, color="black", text="", command=None):
         if text != "":
             self.text += f"\n{text}"
         self.text_text.clear()
         self.rect.clear()
         self.screen.main_window_canvas.delete(self.rect_item)
         self.screen.main_window_canvas.delete(self.text_text_item)
+        if command is not None:
+            self.screen.main_window.onclick(lambda x, y: self.check_pos(
+                x, y, ((self.position[0], self.position[0] + self.rect_sides[0]),
+                       (self.position[1] - self.rect_sides[1], self.position[1])),
+                command), add=True)
         setattr(self, "rect", self.draw_rect(position=(self.position[0] - 5,
                                                        self.position[1] + 3),
                                              sides=self.rect_sides, fill=fill))
@@ -234,10 +230,10 @@ class CanvasObject:
                                               font=self.font, color=color))
         setattr(self, "text_text_item", self.screen.main_window_canvas.find_all()[-1])
 
-    def move_to(self, position):
+    def move_to(self, position, command=None):
         self.position = position
         self.pos = position[0] + 2, position[1] - 3
-        self.update()
+        self.update(command=command)
 
     def clear(self):
         self.text = ""
@@ -281,9 +277,15 @@ class CanvasObject:
 
 class Button(CanvasObject):
     def __init__(self, screen=None, position=(0, 0), rect_sides=(0, 0, 0, 0), text="",
-                 font=("Times New Roman", 20, "normal"), color="black"):
+                 font=("Times New Roman", 20, "normal"), color="black", command=None):
         super().__init__(screen, position, rect_sides, text, font, color)
         self.highlighted = False
+        self.command = command
+        if self.command is not None:
+            self.screen.main_window.onclick(lambda x, y: self.check_pos(
+                x, y, ((self.position[0], self.position[0] + self.rect_sides[0]),
+                       (self.position[1] - self.rect_sides[1], self.position[1])),
+                self.command), add=True)
 
     @staticmethod
     def highlighter(buttons, event):
