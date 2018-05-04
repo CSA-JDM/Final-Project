@@ -31,13 +31,16 @@ class App:
         self.screen = Screen(self, "In Memoriam")
 
         # Audio
-        # sayo_nara = Audio(r'C:\Users\Jacob\Documents\GitHub\Final-Project\Sayo-nara.mp3')
-        # sayo_nara.play()
-        # self.screen.main_window.ontimer(sayo_nara.play, 157000)
+        sayo_nara = Audio(r'C:\Users\Jacob\Documents\GitHub\Final-Project\Sayo-nara.mp3')
+        sayo_nara.play()
+        self.screen.main_window.ontimer(sayo_nara.play, 157000)
 
         # Initial Time Update
         self.time_label = None
         self.time_update()
+
+        # Initial Frame Update
+        self.frame_box = TextBox(self.screen, position=(1195, 30), rect_sides=(75, 35, 75, 35), text="0")
 
         # Main Loop
         self.frame_counter = 0
@@ -47,9 +50,6 @@ class App:
         self.menu = Status()
         self.username = Status()
         self.main_sequence = Status()
-
-        # Initial Frame Update
-        self.frame_box = TextBox(self.screen, position=(1195, 30), rect_sides=(75, 35, 75, 35), text="0")
 
         self.buttons = {}
         self.text_boxes = {}
@@ -87,7 +87,8 @@ class App:
         year, month, day, hour, minute, second = ltime[:6]
         self.time_label = TextBox(self.screen, position=(1130, 710),
                                   rect_sides=(140, 65, 140, 65), text=f"  {hour}:{minute}:{second}\n"
-                                                                      f"{month}/{day}/{year}")
+                                                                      f"{month}/{day}/{year}"
+                                  )
 
     def current_time(self):
         the_time = time.localtime()
@@ -114,22 +115,22 @@ class App:
     def menu_(self):
         TextBox(self.screen, position=(10, 50), text="In Memoriam", font=("Times New Roman", 30, "bold"))
 
-        self.buttons["new_button"] = Button(self, position=(10, 150), rect_sides=(130, 30, 130, 30),
+        self.buttons["new_button"] = Button(self.screen, position=(10, 150), rect_sides=(130, 30, 130, 30),
                                             text="New Game")
-        self.buttons["load_button"] = Button(self, position=(10, 225), rect_sides=(135, 30, 135, 30),
+        self.buttons["load_button"] = Button(self.screen, position=(10, 225), rect_sides=(135, 30, 135, 30),
                                              text="Load Game")
-        self.buttons["quit_button"] = Button(self, position=(10, 300), rect_sides=(60, 30, 60, 30),
+        self.buttons["quit_button"] = Button(self.screen, position=(10, 300), rect_sides=(60, 30, 60, 30),
                                              text="Quit")
 
         self.screen.main_window.onclick(
             lambda x, y:
             [
-                self.screen.check_pos(x, y, ((10, 140), (120, 150)), lambda: setattr(self.menu, "state", False)),
-                self.screen.check_pos(x, y, ((10, 145), (195, 225)), self.load_game),
-                self.screen.check_pos(x, y, ((10, 70), (270, 300)), lambda: setattr(self.loop, "state", False))
+                CanvasObject.check_pos(x, y, ((10, 140), (120, 150)), lambda: setattr(self.menu, "state", False)),
+                CanvasObject.check_pos(x, y, ((10, 145), (195, 225)), self.load_game),
+                CanvasObject.check_pos(x, y, ((10, 70), (270, 300)), lambda: setattr(self.loop, "state", False))
             ]
         )
-        self.screen.main_window_canvas.bind("<Motion>", lambda event: self.screen.highlighter(
+        self.screen.main_window_canvas.bind("<Motion>", lambda event: Button.highlighter(
             buttons=(self.buttons.items()), event=event))
         setattr(self.menu, "deployed", True)
 
@@ -145,14 +146,14 @@ class App:
         self.text_inputs["username_input"] = TextInput(self.screen, (100, 52), (315, 30, 315, 30))
         self.buttons["load_button"].move_to((915, 710))
         self.buttons["quit_button"].move_to((1060, 710))
-        self.screen.main_window_canvas.bind("<Motion>", lambda event: self.screen.highlighter(
+        self.screen.main_window_canvas.bind("<Motion>", lambda event: Button.highlighter(
             buttons=(self.buttons.items()), event=event), add=False)
         self.screen.main_window.onclick(
             lambda x, y:
             [
-                self.screen.check_pos(x, y, ((915, 1050), (680, 710)), self.load_game),
-                self.screen.check_pos(x, y, ((1060, 1120), (680, 710)),
-                                      lambda: setattr(self.loop, "state", False))
+                CanvasObject.check_pos(x, y, ((915, 1050), (680, 710)), self.load_game),
+                CanvasObject.check_pos(x, y, ((1060, 1120), (680, 710)),
+                                       lambda: setattr(self.loop, "state", False))
             ],
             add=False
         )
@@ -160,27 +161,25 @@ class App:
         setattr(self.username, "deployed", True)
 
     def main_sequence_(self):
+        main_text = "Health: 100/100\n"\
+                    "Stamina: 100/100\n"\
+                    "Mana: 20/20\n\n"\
+                    "Inventory:\n"\
+                    "Nothing...\n\n\n\n\n\n\n\n\n\n"
         self.screen.main_window_canvas.delete("all")
         self.buttons["load_button"].update()
         self.buttons["quit_button"].update()
         self.screen.main_window.onkey(None, "Return")
-        inputted_username = self.text_inputs["username_input"].type_string
+        inputted_username = self.text_inputs["username_input"].text
         setattr(self.text_inputs["username_input"], "active", False)
         self.text_boxes["main_textbox"] = TextBox(self.screen, (20, 550), (1000, 500, 1000, 500),
                                                   f'Hello, {inputted_username}, and welcome to "In Memoriam."')
         self.text_boxes["speaker"] = TextBox(self.screen, (20, 85), (1000, 35, 1000, 35), "Speaker: ")
         main_input = TextInput(self.screen, (20, 580), (1000, 30, 1000, 30))
         TextBox(self.screen, position=(1030, 580),
-                rect_sides=(240, 530, 240, 530), text="Health: 100/100\n"
-                                                      "Stamina: 100/100\n"
-                                                      "Mana: 20/20\n\n"
-                                                      "Inventory:\n"
-                                                      "Nothing...\n\n\n\n\n\n\n\n\n\n")
+                rect_sides=(240, 530, 240, 530), text=main_text)
         self.screen.main_window.onkey(
-            lambda: [
-                self.text_boxes["main_textbox"].update(main_input.type_string),
-                main_input.clear()
-            ],
+            lambda: [self.text_boxes["main_textbox"].update(main_input.text), main_input.clear()],
             "Return")
         setattr(self.main_sequence, "deployed", True)
 
@@ -203,19 +202,45 @@ class Screen:
         self.main_window.title(title)
         self.main_window.onkey(self.main_window.bye, "Escape")
 
-    @staticmethod
-    def highlighter(buttons, event):
-        for button in buttons:
-            button = button[1]
-            if button.position[0] < event.x < button.position[0]+button.rect_sides[0] and \
-                    button.position[1]-button.rect_sides[1] < event.y < button.position[1]:
-                if button.highlighted is False:
-                    button.update(fill=True, color="white")
-                    setattr(button, "highlighted", True)
-            else:
-                if button.highlighted is True:
-                    button.update()
-                    setattr(button, "highlighted", False)
+
+class CanvasObject:
+    def __init__(self, screen=None, position=(0, 0), rect_sides=(0, 0, 0, 0), text="",
+                 font=("Times New Roman", 20, "normal"), color="black"):
+        self.screen = screen
+        self.position = position
+        self.pos = position[0] + 2, position[1] - 3
+        self.rect_sides = rect_sides
+        self.text = text
+        self.font = font
+        self.color = color
+
+        self.text_text = self.write(position=self.position, text=self.text, font=self.font, color=self.color)
+        self.text_text_item = self.screen.main_window_canvas.find_all()[-1]
+        self.rect = self.draw_rect(position=(self.position[0] - 5, self.position[1] + 3), sides=self.rect_sides)
+        self.rect_item = self.screen.main_window_canvas.find_all()[-1]
+
+    def update(self, fill=False, color="black", text=""):
+        if text != "":
+            self.text += f"\n{text}"
+        self.text_text.clear()
+        self.rect.clear()
+        self.screen.main_window_canvas.delete(self.rect_item)
+        self.screen.main_window_canvas.delete(self.text_text_item)
+        setattr(self, "rect", self.draw_rect(position=(self.position[0] - 5,
+                                                       self.position[1] + 3),
+                                             sides=self.rect_sides, fill=fill))
+        setattr(self, "rect_item", self.screen.main_window_canvas.find_all()[-1])
+        setattr(self, "text_text", self.write(position=self.position, text=self.text,
+                                              font=self.font, color=color))
+        setattr(self, "text_text_item", self.screen.main_window_canvas.find_all()[-1])
+
+    def move_to(self, position):
+        self.position = position
+        self.pos = position[0] + 2, position[1] - 3
+        self.update()
+
+    def clear(self):
+        self.text = ""
 
     @staticmethod
     def write(position=(0, 0), text="", font=("Times New Roman", 30, "normal"), color="black"):
@@ -238,7 +263,7 @@ class Screen:
             write_turtle.begin_fill()
         write_turtle.seth(0)
         write_turtle.up()
-        write_turtle.goto(position[0], position[1]-5)
+        write_turtle.goto(position[0], position[1] - 5)
         write_turtle.down()
         for side in sides:
             write_turtle.forward(side)
@@ -251,64 +276,42 @@ class Screen:
     @staticmethod
     def check_pos(x, y, cords, func):
         if cords[0][0] < x < cords[0][1] and cords[1][0] < y < cords[1][1]:
-                func()
+            func()
 
 
-class Button:
-    def __init__(self, app, position=(0, 0), rect_sides=(0, 0, 0, 0), text="",
+class Button(CanvasObject):
+    def __init__(self, screen=None, position=(0, 0), rect_sides=(0, 0, 0, 0), text="",
                  font=("Times New Roman", 20, "normal"), color="black"):
-        self.app = app
-        self.position = position
-        self.rect_sides = rect_sides
-        self.text = text
-        self.font = font
-        self.color = color
+        super().__init__(screen, position, rect_sides, text, font, color)
         self.highlighted = False
 
-        self.text_text = self.app.screen.write(position=self.position, text=self.text, font=self.font, color=self.color)
-        self.rect = self.app.screen.draw_rect(position=(self.position[0]-5, self.position[1]+3), sides=self.rect_sides)
-
-    def update(self, fill=False, color="black"):
-        self.text_text.clear()
-        self.rect.clear()
-        setattr(self, "rect", self.app.screen.draw_rect(position=(self.position[0] - 5,
-                                                                  self.position[1] + 3),
-                                                        sides=self.rect_sides, fill=fill))
-        setattr(self, "text_text", self.app.screen.write(position=self.position, text=self.text,
-                                                         font=self.font, color=color))
-
-    def move_to(self, position):
-        self.position = position
-        self.update()
+    @staticmethod
+    def highlighter(buttons, event):
+        for button in buttons:
+            button = button[1]
+            if button.position[0] < event.x < button.position[0] + button.rect_sides[0] and \
+                    button.position[1] - button.rect_sides[1] < event.y < button.position[1]:
+                if button.highlighted is False:
+                    button.update(fill=True, color="white")
+                    setattr(button, "highlighted", True)
+            else:
+                if button.highlighted is True:
+                    button.update()
+                    setattr(button, "highlighted", False)
 
 
-class TextInput:
-    def __init__(self, screen, position=(-5, 0), rect_sides=(0, 0, 0, 0)):
-        self.screen = screen
-        self.type_turtle = turtle.Turtle(visible=False)
-        self.type_turtle.speed(0)
-        self.type_turtle.up()
+class TextInput(CanvasObject):
+    def __init__(self, screen=None, position=(0, 0), rect_sides=(0, 0, 0, 0), text="",
+                 font=("Times New Roman", 20, "normal"), color="black"):
+        super().__init__(screen, position, rect_sides, text, font, color)
 
-        self.type_string = ""
-        self.orig_position = position
-        self.rect_sides = rect_sides
-        self.pos = position[0]+2, position[1]-3
+        self.pos = self.position[0]+2, self.position[1]-3
         self.active = True
 
-        self.rect_ = self.screen.draw_rect(position=(self.orig_position[0]-5, self.orig_position[1]+3),
-                                           sides=self.rect_sides)
-        self.rect_item = self.screen.main_window_canvas.find_all()[-1]
-
         for letter in (f"{string.ascii_letters}{string.digits}" + "!@#$%^&*()_+?><:|[];',./\\{}=" + '"'):
-            self.screen.main_window.onkeypress(
-                lambda letter_=letter: self.add_string(letter_, font=("Times New Roman", 20, "normal")), letter
-            )
-        self.screen.main_window.onkeypress(
-            lambda space="space": self.add_string(" ", font=("Times New Roman", 20, "normal")), "space"
-        )
-        self.screen.main_window.onkeypress(
-            lambda minus="minus": self.add_string("-", font=("Times New Roman", 20, "normal")), "minus"
-        )
+            self.screen.main_window.onkeypress(lambda letter_=letter: self.add_string(letter_), letter)
+        self.screen.main_window.onkeypress(lambda: self.add_string(" "), "space")
+        self.screen.main_window.onkeypress(lambda: self.add_string("-"), "minus")
         self.screen.main_window.onkeypress(self.delete_string, "BackSpace")
 
         self.selector_state = False
@@ -316,73 +319,41 @@ class TextInput:
 
     def add_string(self, text="", font=("Times New Roman", 20, "normal")):
         if self.active is True:
-            self.type_string += text
-            self.type_turtle.goto(self.pos)
-            self.type_turtle.clear()
-            self.type_turtle.write(self.type_string, font=font, move=True)
+            self.text += text
+            self.text_text.clear()
+            self.screen.main_window_canvas.delete(self.text_text_item)
+            setattr(self, "current_text", self.write(text=self.text, position=self.pos, font=font))
+            setattr(self, "current_text_item", self.screen.main_window_canvas.find_all()[-1])
 
     def delete_string(self, font=("Times New Roman", 20, "normal")):
         if self.active is True:
-            self.type_string = self.type_string[:-1]
-            self.type_turtle.goto(self.pos)
-            self.type_turtle.clear()
-            self.type_turtle.write(self.type_string, font=font, move=True)
+            self.text = self.text[:-1]
+            self.text_text.clear()
+            self.screen.main_window_canvas.delete(self.text_text_item)
+            setattr(self, "current_text", self.write(text=self.text, position=self.pos, font=font))
+            setattr(self, "current_text_item", self.screen.main_window_canvas.find_all()[-1])
 
-    def update(self, font=("Times New Roman", 20, "normal")):
-        self.type_turtle.goto(self.pos)
-        self.type_turtle.clear()
-        self.type_turtle.write(self.type_string, font=font, move=True)
-        self.screen.draw_rect(position=(self.orig_position[0]-5, self.orig_position[1]+3), sides=self.rect_sides)
-
-    def clear(self):
-        self.type_string = ""
-
-    def selector(self):
+    def selector(self, font=("Times New Roman", 20, "normal")):
         if self.active is True:
             if self.selector_state is True:
-                self.type_turtle.goto(self.pos)
-                self.type_turtle.clear()
-                self.type_turtle.write(self.type_string+"|", font=("Times New Roman", 20, "normal"), move=True)
-                self.selector_state = False
+                self.text_text.clear()
+                self.screen.main_window_canvas.delete(self.text_text_item)
+                setattr(self, "current_text", self.write(text=self.text, position=self.pos, font=font))
+                setattr(self, "current_text_item", self.screen.main_window_canvas.find_all()[-1])
+                setattr(self, "selector_state", False)
             elif self.selector_state is False:
-                self.type_turtle.goto(self.pos)
-                self.type_turtle.clear()
-                self.type_turtle.write(self.type_string, font=("Times New Roman", 20, "normal"), move=True)
-                self.selector_state = True
+                self.text_text.clear()
+                self.screen.main_window_canvas.delete(self.text_text_item)
+                setattr(self, "current_text", self.write(text=self.text, position=self.pos, font=font))
+                setattr(self, "current_text_item", self.screen.main_window_canvas.find_all()[-1])
+                setattr(self, "selector_state", True)
             self.screen.main_window.ontimer(self.selector, 500)
 
-    def move_to(self, position):
-        self.orig_position = position
-        self.pos = position[0] + 2, position[1] - 3
 
-
-class TextBox:
-    def __init__(self, screen, position=(-5, 0), rect_sides=(0, 0, 0, 0), text="",
+class TextBox(CanvasObject):
+    def __init__(self, screen=None, position=(0, 0), rect_sides=(0, 0, 0, 0), text="",
                  font=("Times New Roman", 20, "normal"), color="black"):
-        self.screen = screen
-        self.position = position
-        self.rect_sides = rect_sides
-        self.text = text
-        self.font = font
-        self.color = color
-
-        self.text_text = self.screen.write(position=(self.position[0]+2, self.position[1]-3), text=self.text,
-                                           font=self.font, color=self.color)
-        self.text_text_item = self.screen.main_window_canvas.find_all()[-1]
-        self.rect = self.screen.draw_rect(position=(position[0] - 5, position[1] + 3), sides=self.rect_sides)
-        self.rect_item = self.screen.main_window_canvas.find_all()[-1]
-
-    def update(self, new_text=""):
-        if new_text != "":
-            self.text += f"\n{new_text}"
-        self.text_text.clear()
-        self.rect.clear()
-        self.text_text = self.screen.write(position=(self.position[0]+2, self.position[1]-3), text=self.text,
-                                           font=self.font, color=self.color)
-        self.rect = self.screen.draw_rect(position=(self.position[0] - 5, self.position[1] + 3), sides=self.rect_sides)
-
-    def move_to(self, position):
-        self.position = position
+        super().__init__(screen, position, rect_sides, text, font, color)
 
 
 class Status:
@@ -405,10 +376,8 @@ class Item:
 
 
 class Area:
-    def __init__(self, screen):
-        self.screen = screen
-        self.draw_turtle = turtle.Turtle(visible=False)
-        self.draw_turtle.up()
+    def __init__(self):
+        pass
 
 
 class Audio:
