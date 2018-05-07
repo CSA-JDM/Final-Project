@@ -25,47 +25,44 @@ import mp3play
 
 class App:
     def __init__(self):
+        # Root Initialization
         self.root = turtle._Root()
         self.root.config(width=1280, height=720)
         self.root.bind("<Escape>", lambda args: self.root.destroy())
         self.root.title("In Memoriam")
 
+        # Canvas Initialization
         self.canvas = turtle.Canvas(self.root)
         self.canvas.config(width=1280, height=720)
         self.canvas.place(x=0, y=0)
 
+        # Item Dictionaries
         self.buttons = {}
         self.text_boxes = {}
         self.text_inputs = {}
 
-        self.frame_counter = 0
-        self.graphics_update_dt = 0.0
-        self.start_time = time.time()
-        self.start_time_gfx = time.perf_counter()
-
-        self.text_boxes["frame_text_box"] = TextBox(
+        self.text_boxes["time_text_box"] = TextBox(
             self.canvas, x=1200, y=10, length=60, height=35,
-            text="0"
+            text=f"{time.localtime()[:]}"
         )
+
+        # Main Sequence
         self.menu()
-        self.fps()
+        self.time_update()
+        #    Song length (in milliseconds): 157000
         self.root.mainloop()
 
-    def fps(self):
-        self.frame_counter += 1
-        now = time.perf_counter()
-        dt = now - self.start_time_gfx
-        self.graphics_update_dt += dt
-        if self.graphics_update_dt > 120:
-            self.graphics_update_dt -= 120
-        self.canvas.delete(self.text_boxes["frame_text_box"].text_item)
-        self.canvas.delete(self.text_boxes["frame_text_box"].rect_item)
-        self.text_boxes["frame_text_box"] = TextBox(
-            self.canvas, x=1200, y=10, length=60, height=35,
-            text=f"{round(self.frame_counter/(time.time()-self.start_time))}"
+    def time_update(self):
+        current_time = time.localtime()[:6]
+        self.canvas.delete(self.text_boxes["time_text_box"].text_item)
+        self.canvas.delete(self.text_boxes["time_text_box"].rect_item)
+        self.text_boxes["time_text_box"] = TextBox(
+            self.canvas, x=1170, y=650, length=110, height=65,
+            text=f"{current_time[3]}:{current_time[4]}:{current_time[5]}\n"
+                 f"{current_time[1]}/{current_time[2]}/{current_time[0]}"
         )
-        self.gfxupdate_starttime = now
-        self.root.after(1000 // (120*2), self.fps)
+        self.root.after(1000, self.time_update)
+
 
     def menu(self):
         self.text_boxes["title_text_box"] = TextBox(self.canvas, x=15, y=10, text="In Memoriam",
@@ -95,7 +92,7 @@ class CanvasObject:
         self.tags = tags
 
     @staticmethod
-    def draw_rect(canvas, x=0.0, y=0.0, length=0.0, height=0.0, fill=None, tags=None):
+    def make_rect(canvas, x=0.0, y=0.0, length=0.0, height=0.0, fill=None, tags=None):
         return canvas.create_rectangle(x, y, x + length, y + height, fill=fill, tags=tags)
 
     @staticmethod
@@ -115,7 +112,7 @@ class TextBox(CanvasObject):
         super().__init__(canvas, x=x, y=y, length=length, height=height, text=text, font=font, width=width, tags=tags)
         self.text_item = self.write(self.canvas, self.x, self.y, self.text, self.font, self.width, self.tags)
         if length > 0 and height > 0:
-            self.rect_item = self.draw_rect(self.canvas, self.x-5, self.y-3, self.length, self.height)
+            self.rect_item = self.make_rect(self.canvas, self.x-5, self.y-3, self.length, self.height)
 
 
 class Button(CanvasObject):
@@ -123,7 +120,7 @@ class Button(CanvasObject):
                  width=0.0, command=None, tags=None):
         super().__init__(canvas, x=x, y=y, length=length, height=height, text=text, font=font, width=width, tags=tags)
         self.text_item = self.write(self.canvas, self.x, self.y, self.text, self.font, self.width, self.tags)
-        self.rect_item = self.draw_rect(self.canvas, self.x-5, self.y-3, self.length, self.height)
+        self.rect_item = self.make_rect(self.canvas, self.x-5, self.y-3, self.length, self.height)
         self.command = command
         self.canvas.bind("<Motion>", self.highlighter, add=True)
         if self.command is not None:
@@ -135,7 +132,7 @@ class Button(CanvasObject):
         if self.x-5 < event.x < self.x-5+self.length and self.y-3 < event.y < self.y-3+self.height:
             self.canvas.delete(self.text_item)
             self.canvas.delete(self.rect_item)
-            self.rect_item = self.draw_rect(self.canvas, self.x-5, self.y-3, self.length, self.height, fill="black")
+            self.rect_item = self.make_rect(self.canvas, self.x-5, self.y-3, self.length, self.height, fill="black")
             self.text_item = self.write(self.canvas, self.x, self.y, self.text, self.font, self.width, "white",
                                         self.tags)
             self.highlighted = True
@@ -144,7 +141,8 @@ class Button(CanvasObject):
                 self.canvas.delete(self.text_item)
                 self.canvas.delete(self.rect_item)
                 self.text_item = self.write(self.canvas, self.x, self.y, self.text, self.font, self.width, self.tags)
-                self.rect_item = self.draw_rect(self.canvas, self.x-5, self.y-3, self.length, self.height)
+                self.rect_item = self.make_rect(self.canvas, self.x-5, self.y-3, self.length, self.height)
+                self.highlighted = False
 
 
 if __name__ == "__main__":
