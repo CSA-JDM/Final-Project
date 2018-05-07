@@ -39,23 +39,33 @@ class App:
         self.text_inputs = {}
 
         self.frame_counter = 0
+        self.graphics_update_dt = 0.0
         self.start_time = time.time()
-        self.menu()
+        self.start_time_gfx = time.perf_counter()
 
         self.text_boxes["frame_text_box"] = TextBox(
             self.canvas, x=1200, y=10, length=60, height=35,
             text="0"
         )
+        self.menu()
+        self.fps()
+        self.root.mainloop()
 
-        while self.root:
-            self.frame_counter += 1
-            self.canvas.delete(self.text_boxes["frame_text_box"].text_item)
-            self.canvas.delete(self.text_boxes["frame_text_box"].rect_item)
-            self.text_boxes["frame_text_box"] = TextBox(
-                self.canvas, x=1200, y=10, length=60, height=35,
-                text=f"{round(self.frame_counter/(time.time()-self.start_time))}"
-            )
-            self.root.update()
+    def fps(self):
+        self.frame_counter += 1
+        now = time.perf_counter()
+        dt = now - self.start_time_gfx
+        self.graphics_update_dt += dt
+        if self.graphics_update_dt > 120:
+            self.graphics_update_dt -= 120
+        self.canvas.delete(self.text_boxes["frame_text_box"].text_item)
+        self.canvas.delete(self.text_boxes["frame_text_box"].rect_item)
+        self.text_boxes["frame_text_box"] = TextBox(
+            self.canvas, x=1200, y=10, length=60, height=35,
+            text=f"{round(self.frame_counter/(time.time()-self.start_time))}"
+        )
+        self.gfxupdate_starttime = now
+        self.root.after(1000 // (120*2), self.fps)
 
     def menu(self):
         self.text_boxes["title_text_box"] = TextBox(self.canvas, x=15, y=10, text="In Memoriam",
