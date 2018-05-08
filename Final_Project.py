@@ -20,6 +20,7 @@ It will also need a time line of what you will have done and when.
 """
 import turtle
 import time
+import string
 import mp3play
 
 
@@ -36,43 +37,91 @@ class App:
         self.canvas.config(width=1280, height=720)
         self.canvas.place(x=0, y=0)
 
+        # Audio Initialization
+        sayo_nara = Audio(self.root, r"..\Final-Project\Sayo-nara.mp3")
+        sayo_nara.play(loop=True)
+
         # Item Dictionaries
         self.buttons = {}
         self.text_boxes = {}
         self.text_inputs = {}
 
-        self.text_boxes["time_text_box"] = TextBox(
-            self.canvas, x=1200, y=10, length=60, height=35,
-            text=f"{time.localtime()[:]}"
-        )
-
-        # Main Sequence
-        self.menu()
-        self.time_update()
-        #    Song length (in milliseconds): 157000
-        self.root.mainloop()
-
-    def time_update(self):
-        current_time = time.localtime()[:6]
-        self.canvas.delete(self.text_boxes["time_text_box"].text_item)
-        self.canvas.delete(self.text_boxes["time_text_box"].rect_item)
+        # Time Text Box Initialization
+        current_time = time.localtime()
         self.text_boxes["time_text_box"] = TextBox(
             self.canvas, x=1170, y=650, length=110, height=65,
             text=f"{current_time[3]}:{current_time[4]}:{current_time[5]}\n"
                  f"{current_time[1]}/{current_time[2]}/{current_time[0]}"
         )
-        self.root.after(1000, self.time_update)
 
+        # Main Sequence
+        self.menu()
+        self.time_update()
+        self.root.mainloop()
+
+    def time_update(self):
+        current_time = list(time.localtime()[:6])
+        if len(str(current_time[3])) < 2:
+            current_time[3] = "0" + str(current_time[3])
+        if len(str(current_time[4])) < 2:
+            current_time[4] = "0" + str(current_time[4])
+        if len(str(current_time[5])) < 2:
+            current_time[5] = "0" + str(current_time[5])
+        self.text_boxes["time_text_box"].update(
+            text=f"{current_time[3]}:{current_time[4]}:{current_time[5]}\n"
+                 f"{current_time[1]}/{current_time[2]}/{current_time[0]}"
+        )
+        self.root.after(1, self.time_update)
 
     def menu(self):
+        self.clear_all()
         self.text_boxes["title_text_box"] = TextBox(self.canvas, x=15, y=10, text="In Memoriam",
                                                     font=("Times New Roman", 30, "bold"))
         self.buttons["new_game_button"] = Button(self.canvas, x=15, y=110, length=130, height=35, text="New Game",
-                                                 command=None)
+                                                 command=self.username)
         self.buttons["load_game_button"] = Button(self.canvas, x=15, y=185, length=135, height=35, text="Load Game",
                                                   command=None)
         self.buttons["quit_button"] = Button(self.canvas, x=15, y=260, length=60, height=35, text="Quit",
                                              command=self.root.destroy)
+
+    def username(self):
+        self.clear_all()
+        self.text_boxes["title_text_box"] = TextBox(self.canvas, x=15, y=30, text="Username:",
+                                                    font=("Times New Roman", 20, "normal"))
+        self.text_inputs["username_text_input"] = TextInput(self.canvas, x=150, y=30, length=500, height=35,
+                                                            command=self.main_sequence)
+        self.buttons["back_button"] = Button(self.canvas, x=15, y=680, length=65, height=35, text="Back",
+                                             command=self.menu)
+        self.buttons["load_game_button"].update(x=955, y=680)
+        self.buttons["quit_button"].update(x=1100, y=680)
+
+    def main_sequence(self):
+        self.clear_all()
+        self.text_inputs["main_sequence_text_inputs"] = TextInput(
+            self.canvas, x=10, y=640, length=930, height=35, command=lambda:
+            self.text_boxes["main_sequence_text_box"].update(text=self.text_inputs["main_sequence_text_inputs"].text,
+                                                             add=True))
+        self.text_boxes["main_sequence_text_box"] = TextBox(self.canvas, x=10, y=10, length=930, height=620,
+                                                            text="Hello, "
+                                                                 f"{self.text_inputs['username_text_input'].text} "
+                                                                 "and welcome to 'In Memoriam!'")
+        self.text_boxes["inventory_text_box"] = TextBox(self.canvas, x=955, y=10, length=325, height=620,
+                                                        text="Inventory:")
+        self.text_boxes["health_bar_text_box"] = TextBox(self.canvas, x=10, y=680, length=460, height=35,
+                                                         text="Health:", command=lambda:
+                                                         TextBox.draw_line(self.canvas, 93, 697, 460, 697, fill="red"))
+        self.text_boxes["mana_bar_text_box"] = TextBox(self.canvas, x=480, y=680, length=460, height=35,
+                                                       text="Mana:", command=lambda:
+                                                       TextBox.draw_line(self.canvas, 550, 697, 930, 697, fill="blue"))
+        self.buttons["load_game_button"].update()
+        self.buttons["quit_button"].update()
+
+    def clear_all(self):
+        self.canvas.delete("all")
+        self.canvas.unbind("<Motion>")
+        self.canvas.unbind("<Button-1>")
+        self.canvas.unbind_all("<Key>")
+        self.canvas.unbind_all("<Return>")
 
     def save(self):
         pass
@@ -80,7 +129,7 @@ class App:
 
 class CanvasObject:
     def __init__(self, canvas, x=0.0, y=0.0, length=0.0, height=0.0, text="", font=("Times New Roman", 20, "normal"),
-                 width=0.0, tags=None):
+                 width=0.0, command=None, tags=None):
         self.canvas = canvas
         self.x = x
         self.y = y
@@ -89,7 +138,28 @@ class CanvasObject:
         self.text = text
         self.font = font
         self.width = width
+        self.command = command
         self.tags = tags
+        self.text_item = self.write(self.canvas, self.x, self.y, self.text, self.font, self.width, self.tags)
+        if length > 0 and height > 0:
+            self.rect_item = self.make_rect(self.canvas, self.x - 5, self.y - 3, self.length, self.height)
+        else:
+            self.rect_item = 0
+
+    def update(self, x=None, y=None, text=None, add=False):
+        if text is not None:
+            if add:
+                self.text += f"\n{text}"
+            elif not add:
+                self.text = text
+        if x is not None:
+            self.x = x
+        if y is not None:
+            self.y = y
+        self.canvas.delete(self.text_item)
+        self.canvas.delete(self.rect_item)
+        self.text_item = self.write(self.canvas, self.x, self.y, self.text, self.font, self.width, self.tags)
+        self.rect_item = self.make_rect(self.canvas, self.x - 5, self.y - 3, self.length, self.height)
 
     @staticmethod
     def make_rect(canvas, x=0.0, y=0.0, length=0.0, height=0.0, fill=None, tags=None):
@@ -106,26 +176,25 @@ class CanvasObject:
             func()
 
 
-class TextBox(CanvasObject):
-    def __init__(self, canvas, x=0.0, y=0.0, length=0.0, height=0.0, text="", font=("Times New Roman", 20, "normal"),
-                 width=0.0, tags=None):
-        super().__init__(canvas, x=x, y=y, length=length, height=height, text=text, font=font, width=width, tags=tags)
-        self.text_item = self.write(self.canvas, self.x, self.y, self.text, self.font, self.width, self.tags)
-        if length > 0 and height > 0:
-            self.rect_item = self.make_rect(self.canvas, self.x-5, self.y-3, self.length, self.height)
-
-
 class Button(CanvasObject):
     def __init__(self, canvas, x=0.0, y=0.0, length=0.0, height=0.0, text="", font=("Times New Roman", 20, "normal"),
                  width=0.0, command=None, tags=None):
-        super().__init__(canvas, x=x, y=y, length=length, height=height, text=text, font=font, width=width, tags=tags)
-        self.text_item = self.write(self.canvas, self.x, self.y, self.text, self.font, self.width, self.tags)
-        self.rect_item = self.make_rect(self.canvas, self.x-5, self.y-3, self.length, self.height)
-        self.command = command
+        super().__init__(canvas, x=x, y=y, length=length, height=height, text=text, font=font, width=width,
+                         command=command, tags=tags)
         self.canvas.bind("<Motion>", self.highlighter, add=True)
         if self.command is not None:
-            self.canvas.bind("<Button-1>", lambda event: self.check_pos(self.x-5, self.y-3, self.length, self.height,
-                                                                        self.command, event))
+            self.canvas.bind("<Button-1>", lambda event: self.check_pos(
+                self.x-5, self.y-3, self.length, self.height, self.command, event
+            ), add=True)
+        self.highlighted = False
+
+    def update(self, x=None, y=None, text=None, add=False):
+        super().update(x, y, text, add)
+        self.canvas.bind("<Motion>", self.highlighter, add=True)
+        if self.command is not None:
+            self.canvas.bind("<Button-1>", lambda event: self.check_pos(self.x - 5, self.y - 3, self.length,
+                                                                        self.height, self.command, event),
+                             add=True)
         self.highlighted = False
 
     def highlighter(self, event):
@@ -143,6 +212,88 @@ class Button(CanvasObject):
                 self.text_item = self.write(self.canvas, self.x, self.y, self.text, self.font, self.width, self.tags)
                 self.rect_item = self.make_rect(self.canvas, self.x-5, self.y-3, self.length, self.height)
                 self.highlighted = False
+
+
+class TextBox(CanvasObject):
+    def __init__(self, canvas, x=0.0, y=0.0, length=0.0, height=0.0, text="", font=("Times New Roman", 20, "normal"),
+                 width=0.0, command=None, tags=None):
+        super().__init__(canvas, x=x, y=y, length=length, height=height, text=text, font=font, width=width,
+                         command=command, tags=tags)
+        if self.command is not None:
+            self.command()
+
+    @staticmethod
+    def draw_line(canvas, x1, y1, x2, y2, fill="black"):
+        canvas.create_line(x1, y1, x2, y2, width=20, fill=fill)
+
+
+class TextInput(CanvasObject):
+    def __init__(self, canvas, x=0.0, y=0.0, length=0.0, height=0.0, text="", font=("Times New Roman", 20, "normal"),
+                 width=0.0, command=None, tags=None):
+        super().__init__(canvas, x=x, y=y, length=length, height=height, text=text, font=font, width=width,
+                         command=command, tags=tags)
+        self.canvas.bind_all("<Key>", self.check_key)
+        self.active = True
+        if self.command is not None:
+            self.canvas.bind_all("<Return>", lambda event: [self.command(), setattr(self, "active", False)])
+        self.selected = False
+        self.selector()
+
+    def check_key(self, event):
+        if event.char in f"{string.ascii_letters}{string.digits} !@#$%^&*()_+-=[];'\\:|,./<>?" + '"{}':
+            self.add_string(event.char)
+        elif event.keysym == "BackSpace":
+            self.delete_string()
+
+    def add_string(self, char):
+        self.text += char
+        self.canvas.delete(self.text_item)
+        self.canvas.delete(self.rect_item)
+        self.text_item = self.write(self.canvas, self.x, self.y, self.text, self.font, self.width, self.tags)
+        self.rect_item = self.make_rect(self.canvas, self.x - 5, self.y - 3, self.length, self.height)
+
+    def delete_string(self):
+        self.text = self.text[:-1]
+        self.canvas.delete(self.text_item)
+        self.canvas.delete(self.rect_item)
+        self.text_item = self.write(self.canvas, self.x, self.y, self.text, self.font, self.width, self.tags)
+        self.rect_item = self.make_rect(self.canvas, self.x - 5, self.y - 3, self.length, self.height)
+
+    def selector(self):
+        if self.active:
+            if not self.selected:
+                self.canvas.unbind_all("<Key>")
+                self.canvas.bind_all("<Key>", self.check_key)
+                self.canvas.delete(self.text_item)
+                self.canvas.delete(self.rect_item)
+                if self.command is not None:
+                    self.canvas.unbind_all("<Return>")
+                    self.canvas.bind_all("<Return>", lambda event: [self.command(), setattr(self, "active", False)])
+                self.text_item = self.write(self.canvas, self.x, self.y, self.text+"|", self.font, self.width,
+                                            self.tags)
+                self.rect_item = self.make_rect(self.canvas, self.x - 5, self.y - 3, self.length, self.height)
+                self.selected = True
+            elif self.selected:
+                self.update()
+                self.selected = False
+            self.canvas.after(500, self.selector)
+
+    def update(self, x=None, y=None, text=None, add=False):
+        super().update(x, y, text, add)
+        if self.command is not None:
+            self.canvas.unbind_all("<Return>")
+            self.canvas.bind_all("<Return>", lambda event: [self.command(), setattr(self, "active", False)])
+
+
+class Audio:
+    def __init__(self, root, file):
+        self.root = root
+        self.file = mp3play.load(file)
+
+    def play(self, loop=False):
+        self.file.play()
+        if loop:
+            self.root.after(157000, self.play)
 
 
 if __name__ == "__main__":
