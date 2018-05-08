@@ -38,8 +38,8 @@ class App:
         self.canvas.place(x=0, y=0)
 
         # Audio Initialization
-        sayo_nara = Audio(self.root, r"..\Final-Project\Sayo-nara.mp3")
-        sayo_nara.play(loop=True)
+        # sayo_nara = Audio(self.root, r"..\Final-Project\Sayo-nara.mp3")
+        # sayo_nara.play(loop=True)
 
         # Item Dictionaries
         self.buttons = {}
@@ -88,8 +88,9 @@ class App:
         self.clear_all()
         self.text_boxes["title_text_box"] = TextBox(self.canvas, x=15, y=30, text="Username:",
                                                     font=("Times New Roman", 20, "normal"))
-        self.text_inputs["username_text_input"] = TextInput(self.canvas, x=150, y=30, length=500, height=35,
-                                                            command=self.main_sequence)
+        self.text_inputs["username_text_input"] = TextInput(
+            self.canvas, x=150, y=30, length=500, height=35,
+            command=lambda: [self.main_sequence(), setattr(self.text_inputs["username_text_input"], "active", False)])
         self.buttons["back_button"] = Button(self.canvas, x=15, y=680, length=65, height=35, text="Back",
                                              command=self.menu)
         self.buttons["load_game_button"].update(x=955, y=680)
@@ -101,18 +102,17 @@ class App:
             self.canvas, x=10, y=640, length=930, height=35, command=lambda:
             self.text_boxes["main_sequence_text_box"].update(text=self.text_inputs["main_sequence_text_inputs"].text,
                                                              add=True))
-        self.text_boxes["main_sequence_text_box"] = TextBox(self.canvas, x=10, y=10, length=930, height=620,
-                                                            text="Hello, "
-                                                                 f"{self.text_inputs['username_text_input'].text} "
-                                                                 "and welcome to 'In Memoriam!'")
+        self.text_boxes["main_sequence_text_box"] = TextBox(
+            self.canvas, x=10, y=10, length=930, height=620,
+            text=f"Hello, {self.text_inputs['username_text_input'].text} and welcome to 'In Memoriam!'")
         self.text_boxes["inventory_text_box"] = TextBox(self.canvas, x=955, y=10, length=325, height=620,
                                                         text="Inventory:")
-        self.text_boxes["health_bar_text_box"] = TextBox(self.canvas, x=10, y=680, length=460, height=35,
-                                                         text="Health:", command=lambda:
-                                                         TextBox.draw_line(self.canvas, 93, 697, 460, 697, fill="red"))
-        self.text_boxes["mana_bar_text_box"] = TextBox(self.canvas, x=480, y=680, length=460, height=35,
-                                                       text="Mana:", command=lambda:
-                                                       TextBox.draw_line(self.canvas, 550, 697, 930, 697, fill="blue"))
+        self.text_boxes["health_bar_text_box"] = TextBox(
+            self.canvas, x=10, y=680, length=460, height=35, text="Health:", command=lambda:
+            self.text_boxes["mana_bar_text_box"].make_line(93, 697, 460, 697, fill="red"))
+        self.text_boxes["mana_bar_text_box"] = TextBox(
+            self.canvas, x=480, y=680, length=460, height=35, text="Mana:", command=lambda:
+            self.text_boxes["mana_bar_text_box"].make_line(550, 697, 930, 697, fill="blue"))
         self.buttons["load_game_button"].update()
         self.buttons["quit_button"].update()
 
@@ -140,9 +140,9 @@ class CanvasObject:
         self.width = width
         self.command = command
         self.tags = tags
-        self.text_item = self.write(self.canvas, self.x, self.y, self.text, self.font, self.width, self.tags)
+        self.text_item = self.write(tags=self.tags)
         if length > 0 and height > 0:
-            self.rect_item = self.make_rect(self.canvas, self.x - 5, self.y - 3, self.length, self.height)
+            self.rect_item = self.make_rect(tags=self.tags)
         else:
             self.rect_item = 0
 
@@ -158,21 +158,24 @@ class CanvasObject:
             self.y = y
         self.canvas.delete(self.text_item)
         self.canvas.delete(self.rect_item)
-        self.text_item = self.write(self.canvas, self.x, self.y, self.text, self.font, self.width, self.tags)
-        self.rect_item = self.make_rect(self.canvas, self.x - 5, self.y - 3, self.length, self.height)
+        self.text_item = self.write(tags=self.tags)
+        self.rect_item = self.make_rect(tags=self.tags)
 
-    @staticmethod
-    def make_rect(canvas, x=0.0, y=0.0, length=0.0, height=0.0, fill=None, tags=None):
-        return canvas.create_rectangle(x, y, x + length, y + height, fill=fill, tags=tags)
+    def make_rect(self, fill=None, tags=None):
+        return self.canvas.create_rectangle(self.x, self.y, self.x + self.length, self.y + self.height,
+                                            fill=fill, tags=tags)
 
-    @staticmethod
-    def write(canvas, x=0.0, y=0.0, text="", font=("Times New Roman", 20, "normal"), width=0.0, fill="black",
-              tags=None):
-        return canvas.create_text(x, y, text=text, anchor="nw", font=font, width=width, fill=fill, tags=tags)
+    def make_line(self, x1, y1, x2, y2, fill="black", tags=None):
+        return self.canvas.create_line(x1, y1, x2, y2, width=20, fill=fill, tags=tags)
 
-    @staticmethod
-    def check_pos(x_start, y_start, length, height, func, event):
-        if x_start < event.x < x_start+length and y_start < event.y < y_start+height:
+    def write(self, text=None, fill="black", tags=None):
+        if text is None:
+            text = self.text
+        return self.canvas.create_text(self.x+5, self.y+3, text=text,
+                                       anchor="nw", font=self.font, width=self.width, fill=fill, tags=tags)
+
+    def check_pos(self, func, event):
+        if self.x < event.x < self.x+self.length and self.y < event.y < self.y+self.height:
             func()
 
 
@@ -183,34 +186,29 @@ class Button(CanvasObject):
                          command=command, tags=tags)
         self.canvas.bind("<Motion>", self.highlighter, add=True)
         if self.command is not None:
-            self.canvas.bind("<Button-1>", lambda event: self.check_pos(
-                self.x-5, self.y-3, self.length, self.height, self.command, event
-            ), add=True)
+            self.canvas.bind("<Button-1>", lambda event: self.check_pos(self.command, event), add=True)
         self.highlighted = False
 
     def update(self, x=None, y=None, text=None, add=False):
         super().update(x, y, text, add)
         self.canvas.bind("<Motion>", self.highlighter, add=True)
         if self.command is not None:
-            self.canvas.bind("<Button-1>", lambda event: self.check_pos(self.x - 5, self.y - 3, self.length,
-                                                                        self.height, self.command, event),
-                             add=True)
+            self.canvas.bind("<Button-1>", lambda event: self.check_pos(self.command, event), add=True)
         self.highlighted = False
 
     def highlighter(self, event):
         if self.x-5 < event.x < self.x-5+self.length and self.y-3 < event.y < self.y-3+self.height:
             self.canvas.delete(self.text_item)
             self.canvas.delete(self.rect_item)
-            self.rect_item = self.make_rect(self.canvas, self.x-5, self.y-3, self.length, self.height, fill="black")
-            self.text_item = self.write(self.canvas, self.x, self.y, self.text, self.font, self.width, "white",
-                                        self.tags)
+            self.rect_item = self.make_rect(fill="black")
+            self.text_item = self.write(fill="white", tags=self.tags)
             self.highlighted = True
         else:
             if self.highlighted:
                 self.canvas.delete(self.text_item)
                 self.canvas.delete(self.rect_item)
-                self.text_item = self.write(self.canvas, self.x, self.y, self.text, self.font, self.width, self.tags)
-                self.rect_item = self.make_rect(self.canvas, self.x-5, self.y-3, self.length, self.height)
+                self.text_item = self.write(tags=self.tags)
+                self.rect_item = self.make_rect(tags=self.tags)
                 self.highlighted = False
 
 
@@ -222,10 +220,6 @@ class TextBox(CanvasObject):
         if self.command is not None:
             self.command()
 
-    @staticmethod
-    def draw_line(canvas, x1, y1, x2, y2, fill="black"):
-        canvas.create_line(x1, y1, x2, y2, width=20, fill=fill)
-
 
 class TextInput(CanvasObject):
     def __init__(self, canvas, x=0.0, y=0.0, length=0.0, height=0.0, text="", font=("Times New Roman", 20, "normal"),
@@ -235,7 +229,7 @@ class TextInput(CanvasObject):
         self.canvas.bind_all("<Key>", self.check_key)
         self.active = True
         if self.command is not None:
-            self.canvas.bind_all("<Return>", lambda event: [self.command(), setattr(self, "active", False)])
+            self.canvas.bind_all("<Return>", lambda: self.command())
         self.selected = False
         self.selector()
 
@@ -249,15 +243,15 @@ class TextInput(CanvasObject):
         self.text += char
         self.canvas.delete(self.text_item)
         self.canvas.delete(self.rect_item)
-        self.text_item = self.write(self.canvas, self.x, self.y, self.text, self.font, self.width, self.tags)
-        self.rect_item = self.make_rect(self.canvas, self.x - 5, self.y - 3, self.length, self.height)
+        self.text_item = self.write(tags=self.tags)
+        self.rect_item = self.make_rect(tags=self.tags)
 
     def delete_string(self):
         self.text = self.text[:-1]
         self.canvas.delete(self.text_item)
         self.canvas.delete(self.rect_item)
-        self.text_item = self.write(self.canvas, self.x, self.y, self.text, self.font, self.width, self.tags)
-        self.rect_item = self.make_rect(self.canvas, self.x - 5, self.y - 3, self.length, self.height)
+        self.text_item = self.write(tags=self.tags)
+        self.rect_item = self.make_rect(tags=self.tags)
 
     def selector(self):
         if self.active:
@@ -269,9 +263,8 @@ class TextInput(CanvasObject):
                 if self.command is not None:
                     self.canvas.unbind_all("<Return>")
                     self.canvas.bind_all("<Return>", lambda event: [self.command(), setattr(self, "active", False)])
-                self.text_item = self.write(self.canvas, self.x, self.y, self.text+"|", self.font, self.width,
-                                            self.tags)
-                self.rect_item = self.make_rect(self.canvas, self.x - 5, self.y - 3, self.length, self.height)
+                self.text_item = self.write(text=self.text+"|", tags=self.tags)
+                self.rect_item = self.make_rect(tags=self.tags)
                 self.selected = True
             elif self.selected:
                 self.update()
@@ -282,7 +275,12 @@ class TextInput(CanvasObject):
         super().update(x, y, text, add)
         if self.command is not None:
             self.canvas.unbind_all("<Return>")
-            self.canvas.bind_all("<Return>", lambda event: [self.command(), setattr(self, "active", False)])
+            self.canvas.bind_all("<Return>", lambda event: self.command)
+
+
+class Main_Sequence(TextBox, TextInput):
+    def __init__(self):
+        super().__init__(TextBox)
 
 
 class Audio:
