@@ -75,31 +75,31 @@ class App:
 
     def menu(self):
         self.clear_all()
-        self.text_boxes["title_text_box"] = TextBox(self.canvas, x=15, y=10, text="In Memoriam",
+        self.text_boxes["title_text_box"] = TextBox(self.canvas, x=10, y=10, text="In Memoriam",
                                                     font=("Times New Roman", 30, "bold"))
-        self.buttons["new_game_button"] = Button(self.canvas, x=15, y=110, length=130, height=35, text="New Game",
+        self.buttons["new_game_button"] = Button(self.canvas, x=10, y=110, length=130, height=35, text="New Game",
                                                  command=self.username)
-        self.buttons["load_game_button"] = Button(self.canvas, x=15, y=185, length=135, height=35, text="Load Game",
+        self.buttons["load_game_button"] = Button(self.canvas, x=10, y=185, length=135, height=35, text="Load Game",
                                                   command=None)
-        self.buttons["quit_button"] = Button(self.canvas, x=15, y=260, length=60, height=35, text="Quit",
+        self.buttons["quit_button"] = Button(self.canvas, x=10, y=260, length=60, height=35, text="Quit",
                                              command=self.root.destroy)
 
     def username(self):
         self.clear_all()
-        self.text_boxes["title_text_box"] = TextBox(self.canvas, x=15, y=30, text="Username:",
+        self.text_boxes["title_text_box"] = TextBox(self.canvas, x=10, y=30, text="Username:",
                                                     font=("Times New Roman", 20, "normal"))
         self.text_inputs["username_text_input"] = TextInput(
-            self.canvas, x=150, y=30, length=500, height=35,
+            self.canvas, x=145, y=30, length=500, height=35,
             command=lambda event: [self.main_sequence(),
                                    setattr(self.text_inputs["username_text_input"], "active", False)])
-        self.buttons["back_button"] = Button(self.canvas, x=15, y=680, length=65, height=35, text="Back",
+        self.buttons["back_button"] = Button(self.canvas, x=10, y=680, length=65, height=35, text="Back",
                                              command=self.menu)
-        self.buttons["load_game_button"].update(x=955, y=680)
-        self.buttons["quit_button"].update(x=1100, y=680)
+        self.buttons["load_game_button"].update(x=950, y=680)
+        self.buttons["quit_button"].update(x=1095, y=680)
 
     def main_sequence(self):
         self.clear_all()
-        self.main_user_input = MainSequence(self.canvas, 10, 10, self.text_inputs['username_text_input'].text)
+        self.main_user_input = MainSequence(self.canvas, self.text_inputs['username_text_input'].text, 10, 10)
         self.text_boxes["inventory_text_box"] = TextBox(self.canvas, x=955, y=10, length=325, height=620,
                                                         text="Inventory:")
         self.text_boxes["health_bar_text_box"] = TextBox(self.canvas, x=10, y=680, length=460, height=35,
@@ -280,27 +280,40 @@ class TextInput(CanvasObject):
 
 
 class MainSequence:
-    def __init__(self, canvas, x, y, username):
+    def __init__(self, canvas, username, x=None, y=None):
         self.canvas = canvas
         self.x = x
         self.y = y
         self.username = username
-        self.text_box = TextBox(canvas, x=x, y=y, length=930, height=620,
-                                text=f"Hello, {self.username} and welcome to 'In Memoriam!'")
-        self.text_input = TextInput(canvas, x=x, y=y+630, length=930, height=35,
-                                    command=self.check_typed)
+        if self.x is not None and self.y is not None:
+            self.text_box = TextBox(canvas, x=x, y=y, length=930, height=620,
+                                    text=f"Hello, {self.username} and welcome to 'In Memoriam!'")
+            self.text_input = TextInput(canvas, x=x, y=y+630, length=930, height=35,
+                                        command=self.check_typed)
 
         self.commands = {
-            ("help", "support", "aide", "aid", "commands"): lambda: self.text_box.update(text="Help? HAH", add=True)
+            ("help", "support", "aide", "aid", "commands"): lambda: self.text_box.update(text="Help? HAH", add=True),
+            ("clear", "clear screen", "clear all", "clearall", "clearscreen", "cls", "clr"):
+                lambda: self.text_box.update(text="Screen cleared.")
         }
 
     def check_typed(self, *args):
         for command in self.commands:
             if self.text_input.text.lower() in command:
                 self.commands[command]()
-            else:
-                self.text_box.update(text="Unknown command/input. If lost, type 'help'.", add=True)
+        command_keys = []
+        for command in self.commands:
+            command_keys += command
+        print(command_keys)
+        if self.text_input.text.lower() not in command_keys:
+            self.text_box.update(text="Unknown command/input. If lost, type 'help'.", add=True)
         self.text_input.update(text="")
+
+
+class FightSequence(MainSequence):
+    def __init__(self, canvas, username):
+        super().__init__(canvas, username)
+        print("successful")
 
 
 class Character:
