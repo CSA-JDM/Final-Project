@@ -38,8 +38,8 @@ class App:
         self.canvas.place(x=0, y=0)
 
         # Audio Initialization
-        # sayo_nara = Audio(self.root, r"..\Final-Project\Sayo-nara.mp3")
-        # sayo_nara.play(loop=True)
+        sayo_nara = Audio(self.root, r"..\Final-Project\Sayo-nara.mp3")
+        sayo_nara.play(loop=True)
 
         # Item Dictionaries
         self.buttons = {}
@@ -90,7 +90,8 @@ class App:
                                                     font=("Times New Roman", 20, "normal"))
         self.text_inputs["username_text_input"] = TextInput(
             self.canvas, x=150, y=30, length=500, height=35,
-            command=lambda: [self.main_sequence(), setattr(self.text_inputs["username_text_input"], "active", False)])
+            command=lambda event: [self.main_sequence(),
+                                   setattr(self.text_inputs["username_text_input"], "active", False)])
         self.buttons["back_button"] = Button(self.canvas, x=15, y=680, length=65, height=35, text="Back",
                                              command=self.menu)
         self.buttons["load_game_button"].update(x=955, y=680)
@@ -98,21 +99,15 @@ class App:
 
     def main_sequence(self):
         self.clear_all()
-        self.text_inputs["main_sequence_text_inputs"] = TextInput(
-            self.canvas, x=10, y=640, length=930, height=35, command=lambda:
-            self.text_boxes["main_sequence_text_box"].update(text=self.text_inputs["main_sequence_text_inputs"].text,
-                                                             add=True))
-        self.text_boxes["main_sequence_text_box"] = TextBox(
-            self.canvas, x=10, y=10, length=930, height=620,
-            text=f"Hello, {self.text_inputs['username_text_input'].text} and welcome to 'In Memoriam!'")
+        self.main_user_input = MainSequence(self.canvas, 10, 10, self.text_inputs['username_text_input'].text)
         self.text_boxes["inventory_text_box"] = TextBox(self.canvas, x=955, y=10, length=325, height=620,
                                                         text="Inventory:")
-        self.text_boxes["health_bar_text_box"] = TextBox(
-            self.canvas, x=10, y=680, length=460, height=35, text="Health:", command=lambda:
-            self.text_boxes["mana_bar_text_box"].make_line(93, 697, 460, 697, fill="red"))
-        self.text_boxes["mana_bar_text_box"] = TextBox(
-            self.canvas, x=480, y=680, length=460, height=35, text="Mana:", command=lambda:
-            self.text_boxes["mana_bar_text_box"].make_line(550, 697, 930, 697, fill="blue"))
+        self.text_boxes["health_bar_text_box"] = TextBox(self.canvas, x=10, y=680, length=460, height=35,
+                                                         text="Health:")
+        self.text_boxes["health_bar_text_box"].make_line(93, 698, 460, 698, fill="red")
+        self.text_boxes["mana_bar_text_box"] = TextBox(self.canvas, x=480, y=680, length=460, height=35,
+                                                       text="Mana:")
+        self.text_boxes["mana_bar_text_box"].make_line(550, 698, 930, 698, fill="blue")
         self.buttons["load_game_button"].update()
         self.buttons["quit_button"].update()
 
@@ -131,7 +126,7 @@ class CanvasObject:
     def __init__(self, canvas, x=0.0, y=0.0, length=0.0, height=0.0, text="", font=("Times New Roman", 20, "normal"),
                  width=0.0, command=None, tags=None):
         self.canvas = canvas
-        self.x = x
+        self.x = x - 5
         self.y = y
         self.length = length
         self.height = height
@@ -171,8 +166,14 @@ class CanvasObject:
     def write(self, text=None, fill="black", tags=None):
         if text is None:
             text = self.text
-        return self.canvas.create_text(self.x+5, self.y+3, text=text,
-                                       anchor="nw", font=self.font, width=self.width, fill=fill, tags=tags)
+        if self.length > 0 and self.height > 0:
+            return self.canvas.create_text(self.x+5, self.y+3, text=text,
+                                           anchor="nw", font=self.font, width=self.length,
+                                           fill=fill, tags=tags)
+        else:
+            return self.canvas.create_text(self.x + 5, self.y + 3, text=text,
+                                           anchor="nw", font=self.font, width=self.width, fill=fill,
+                                           tags=tags)
 
     def check_pos(self, func, event):
         if self.x < event.x < self.x+self.length and self.y < event.y < self.y+self.height:
@@ -229,9 +230,15 @@ class TextInput(CanvasObject):
         self.canvas.bind_all("<Key>", self.check_key)
         self.active = True
         if self.command is not None:
-            self.canvas.bind_all("<Return>", lambda: self.command())
+            self.canvas.bind_all("<Return>", lambda event: self.command(event))
         self.selected = False
         self.selector()
+
+    def update(self, x=None, y=None, text=None, add=False):
+        super().update(x, y, text, add)
+        if self.command is not None:
+            self.canvas.unbind_all("<Return>")
+            self.canvas.bind_all("<Return>", lambda event: self.command(event))
 
     def check_key(self, event):
         if event.char in f"{string.ascii_letters}{string.digits} !@#$%^&*()_+-=[];'\\:|,./<>?" + '"{}':
@@ -262,7 +269,7 @@ class TextInput(CanvasObject):
                 self.canvas.delete(self.rect_item)
                 if self.command is not None:
                     self.canvas.unbind_all("<Return>")
-                    self.canvas.bind_all("<Return>", lambda event: [self.command(), setattr(self, "active", False)])
+                    self.canvas.bind_all("<Return>", lambda event: self.command(event))
                 self.text_item = self.write(text=self.text+"|", tags=self.tags)
                 self.rect_item = self.make_rect(tags=self.tags)
                 self.selected = True
@@ -271,16 +278,39 @@ class TextInput(CanvasObject):
                 self.selected = False
             self.canvas.after(500, self.selector)
 
-    def update(self, x=None, y=None, text=None, add=False):
-        super().update(x, y, text, add)
-        if self.command is not None:
-            self.canvas.unbind_all("<Return>")
-            self.canvas.bind_all("<Return>", lambda event: self.command)
+
+class MainSequence:
+    def __init__(self, canvas, x, y, username):
+        self.canvas = canvas
+        self.x = x
+        self.y = y
+        self.username = username
+        self.text_box = TextBox(canvas, x=x, y=y, length=930, height=620,
+                                text=f"Hello, {self.username} and welcome to 'In Memoriam!'")
+        self.text_input = TextInput(canvas, x=x, y=y+630, length=930, height=35,
+                                    command=self.check_typed)
+
+        self.commands = {
+            ("help", "support", "aide", "aid", "commands"): lambda: self.text_box.update(text="Help? HAH", add=True)
+        }
+
+    def check_typed(self, *args):
+        for command in self.commands:
+            if self.text_input.text.lower() in command:
+                self.commands[command]()
+            else:
+                self.text_box.update(text="Unknown command/input. If lost, type 'help'.", add=True)
+        self.text_input.update(text="")
 
 
-class Main_Sequence(TextBox, TextInput):
+class Character:
     def __init__(self):
-        super().__init__(TextBox)
+        self.character_type = {
+            "Player": [],
+            "NPC": [],
+            "Boss": [],
+            "Enemy": []
+        }
 
 
 class Audio:
