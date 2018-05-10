@@ -99,7 +99,8 @@ class App:
 
     def main_sequence(self):
         self.clear_all()
-        self.main_user_input = MainSequence(self.canvas, 10, 10, self.text_inputs['username_text_input'].text)
+        self.main_user_input = MainSequence(self.canvas, 10, 10, self.text_inputs['username_text_input'].text,
+                                            self.buttons)
         self.buttons["load_game_button"].update()
         self.buttons["quit_button"].update()
 
@@ -133,12 +134,16 @@ class CanvasObject:
         else:
             self.rect_item = 0
 
-    def update(self, x=None, y=None, text=None, add=False):
+    def update(self, x=None, y=None, length=None, height=None, text=None, add=False):
         if text is not None:
             if add:
                 self.text += f"\n{text}"
             elif not add:
                 self.text = text
+        if length is not None:
+            self.length = length
+        if height is not None:
+            self.height = height
         if x is not None:
             self.x = x
         if y is not None:
@@ -182,8 +187,8 @@ class Button(CanvasObject):
             self.canvas.bind("<Button-1>", lambda event: self.check_pos(self.command, event), add=True)
         self.highlighted = False
 
-    def update(self, x=None, y=None, text=None, add=False):
-        super().update(x, y, text, add)
+    def update(self, x=None, y=None, length=None, height=None, text=None, add=False):
+        super().update(x, y, length, height, text, add)
         self.canvas.bind("<Motion>", self.highlighter, add=True)
         if self.command is not None:
             self.canvas.bind("<Button-1>", lambda event: self.check_pos(self.command, event), add=True)
@@ -226,8 +231,8 @@ class TextInput(CanvasObject):
         self.selected = False
         self.selector()
 
-    def update(self, x=None, y=None, text=None, add=False):
-        super().update(x, y, text, add)
+    def update(self, x=None, y=None, length=None, height=None, text=None, add=False):
+        super().update(x, y, length, height, text, add)
         if self.command is not None:
             self.canvas.unbind_all("<Return>")
             self.canvas.bind_all("<Return>", lambda event: self.command(event))
@@ -272,14 +277,15 @@ class TextInput(CanvasObject):
 
 
 class MainSequence:
-    def __init__(self, canvas, x, y, username):
+    def __init__(self, canvas, x, y, username, buttons):
         self.canvas = canvas
         self.x = x
         self.y = y
         self.username = username
+        self.buttons = buttons
 
         self.text_box = TextBox(canvas, x=x, y=y, length=930, height=620,
-                                text=f"Hello, {self.username} and welcome to 'In Memoriam!'")
+                                text=f"Hello, {self.username}, and welcome to 'In Memoriam!'")
         self.text_input = TextInput(canvas, x=x, y=y+630, length=930, height=35,
                                     command=self.check_typed)
 
@@ -300,7 +306,7 @@ class MainSequence:
             ("clear", "clear screen", "clear all", "clearall", "clearscreen", "cls", "clr"):
                 lambda: self.text_box.update(text="Screen cleared."),
             ("attack", "fight"):
-                lambda: FightSequence(self)
+                lambda: FightSequence(self, self.buttons)
         }
 
     def check_typed(self, *args):
@@ -316,26 +322,45 @@ class MainSequence:
 
 
 class FightSequence:
-    def __init__(self, main_sequence):
+    def __init__(self, main_sequence, buttons):
         self.main_sequence = main_sequence
-        self.main_sequence.canvas.itemconfig(self.main_sequence.text_box.rect_item, state="hidden")
-        self.main_sequence.canvas.itemconfig(self.main_sequence.text_box.text_item, state="hidden")
+        self.buttons = buttons
+        self.main_sequence.text_box.update(y=230, height=400, text="ENCOUNTER GOES HERE")
         setattr(self.main_sequence.text_input, "active", False)
         self.main_sequence.canvas.after(0, lambda:
                                         [self.main_sequence.canvas.unbind_all("<Key>"),
                                          self.main_sequence.canvas.unbind_all("<Return>"),
-                                         self.main_sequence.canvas.itemconfig(self.main_sequence.text_input.rect_item,
-                                                                              state="hidden"),
                                          self.main_sequence.canvas.itemconfig(self.main_sequence.text_input.text_item,
+                                                                              state="hidden"),
+                                         self.main_sequence.canvas.itemconfig(self.main_sequence.text_input.rect_item,
                                                                               state="hidden")
                                          ])
-        self.main_sequence.canvas.after(3000, lambda: [self.main_sequence.text_input.update(),
-                                                       self.main_sequence.canvas.bind_all(
-                                                           "<Key>",
-                                                           self.main_sequence.text_input.check_key),
-                                                       setattr(self.main_sequence.text_input, "active", True),
-                                                       self.main_sequence.text_box.update(text="FIGHT RESULTS GO HERE")
-                                                       ])
+        self.fight_button = Button(self.main_sequence.canvas, x=10, y=640, length=100, height=35, text="Fight")
+        self.magic_button = Button(self.main_sequence.canvas, x=120, y=640, length=100, height=35, text="Magic")
+        self.items_button = Button(self.main_sequence.canvas, x=230, y=640, length=100, height=35, text="Items")
+        self.run_button = Button(self.main_sequence.canvas, x=340, y=640, length=100, height=35, text="Run",
+                                 command=self.end_fight)
+
+    def end_fight(self):
+        self.main_sequence.canvas.delete(self.fight_button.text_item)
+        self.main_sequence.canvas.delete(self.fight_button.rect_item)
+        self.main_sequence.canvas.delete(self.magic_button.text_item)
+        self.main_sequence.canvas.delete(self.magic_button.rect_item)
+        self.main_sequence.canvas.delete(self.items_button.text_item)
+        self.main_sequence.canvas.delete(self.items_button.rect_item)
+        self.main_sequence.canvas.delete(self.run_button.text_item)
+        self.main_sequence.canvas.delete(self.run_button.rect_item)
+        self.main_sequence.canvas.unbind("<Motion>")
+        self.main_sequence.canvas.unbind("<Button-1>")
+        self.buttons["load_game_button"].update()
+        self.buttons["quit_button"].update()
+        self.main_sequence.canvas.after(0, lambda: [self.main_sequence.text_input.update(),
+                                                    self.main_sequence.canvas.bind_all(
+                                                        "<Key>",
+                                                        self.main_sequence.text_input.check_key),
+                                                    setattr(self.main_sequence.text_input, "active", True),
+                                                    self.main_sequence.text_box.update(text="FIGHT RESULTS GO HERE")
+                                                    ])
 
 
 class Character:
