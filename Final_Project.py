@@ -99,15 +99,7 @@ class App:
 
     def main_sequence(self):
         self.clear_all()
-        self.main_user_input = MainSequence(self.canvas, self.text_inputs['username_text_input'].text, 10, 10)
-        self.text_boxes["inventory_text_box"] = TextBox(self.canvas, x=955, y=10, length=325, height=620,
-                                                        text="Inventory:")
-        self.text_boxes["health_bar_text_box"] = TextBox(self.canvas, x=10, y=680, length=460, height=35,
-                                                         text="Health:")
-        self.text_boxes["health_bar_text_box"].make_line(93, 698, 460, 698, fill="red")
-        self.text_boxes["mana_bar_text_box"] = TextBox(self.canvas, x=480, y=680, length=460, height=35,
-                                                       text="Mana:")
-        self.text_boxes["mana_bar_text_box"].make_line(550, 698, 930, 698, fill="blue")
+        self.main_user_input = MainSequence(self.canvas, 10, 10, self.text_inputs['username_text_input'].text)
         self.buttons["load_game_button"].update()
         self.buttons["quit_button"].update()
 
@@ -280,21 +272,35 @@ class TextInput(CanvasObject):
 
 
 class MainSequence:
-    def __init__(self, canvas, username, x=None, y=None):
+    def __init__(self, canvas, x, y, username):
         self.canvas = canvas
         self.x = x
         self.y = y
         self.username = username
-        if self.x is not None and self.y is not None:
-            self.text_box = TextBox(canvas, x=x, y=y, length=930, height=620,
-                                    text=f"Hello, {self.username} and welcome to 'In Memoriam!'")
-            self.text_input = TextInput(canvas, x=x, y=y+630, length=930, height=35,
-                                        command=self.check_typed)
+
+        self.text_box = TextBox(canvas, x=x, y=y, length=930, height=620,
+                                text=f"Hello, {self.username} and welcome to 'In Memoriam!'")
+        self.text_input = TextInput(canvas, x=x, y=y+630, length=930, height=35,
+                                    command=self.check_typed)
+
+        self.inventory_text_box = TextBox(self.canvas, x=955, y=10, length=325, height=620,
+                                          text="Inventory:")
+
+        self.health_bar_text_box = TextBox(self.canvas, x=10, y=680, length=460, height=35,
+                                           text="Health:")
+        self.health_bar_text_box.make_line(93, 698, 460, 698, fill="red")
+
+        self.mana_bar_text_box = TextBox(self.canvas, x=480, y=680, length=460, height=35,
+                                         text="Mana:")
+        self.mana_bar_text_box.make_line(550, 698, 930, 698, fill="blue")
 
         self.commands = {
-            ("help", "support", "aide", "aid", "commands"): lambda: self.text_box.update(text="Help? HAH", add=True),
+            ("help", "support", "aide", "aid", "commands"):
+                lambda: self.text_box.update(text="Help? HAH", add=True),
             ("clear", "clear screen", "clear all", "clearall", "clearscreen", "cls", "clr"):
-                lambda: self.text_box.update(text="Screen cleared.")
+                lambda: self.text_box.update(text="Screen cleared."),
+            ("attack", "fight"):
+                lambda: FightSequence(self)
         }
 
     def check_typed(self, *args):
@@ -304,16 +310,32 @@ class MainSequence:
         command_keys = []
         for command in self.commands:
             command_keys += command
-        print(command_keys)
         if self.text_input.text.lower() not in command_keys:
             self.text_box.update(text="Unknown command/input. If lost, type 'help'.", add=True)
         self.text_input.update(text="")
 
 
-class FightSequence(MainSequence):
-    def __init__(self, canvas, username):
-        super().__init__(canvas, username)
-        print("successful")
+class FightSequence:
+    def __init__(self, main_sequence):
+        self.main_sequence = main_sequence
+        self.main_sequence.canvas.itemconfig(self.main_sequence.text_box.rect_item, state="hidden")
+        self.main_sequence.canvas.itemconfig(self.main_sequence.text_box.text_item, state="hidden")
+        setattr(self.main_sequence.text_input, "active", False)
+        self.main_sequence.canvas.after(0, lambda:
+                                        [self.main_sequence.canvas.unbind_all("<Key>"),
+                                         self.main_sequence.canvas.unbind_all("<Return>"),
+                                         self.main_sequence.canvas.itemconfig(self.main_sequence.text_input.rect_item,
+                                                                              state="hidden"),
+                                         self.main_sequence.canvas.itemconfig(self.main_sequence.text_input.text_item,
+                                                                              state="hidden")
+                                         ])
+        self.main_sequence.canvas.after(3000, lambda: [self.main_sequence.text_input.update(),
+                                                       self.main_sequence.canvas.bind_all(
+                                                           "<Key>",
+                                                           self.main_sequence.text_input.check_key),
+                                                       setattr(self.main_sequence.text_input, "active", True),
+                                                       self.main_sequence.text_box.update(text="FIGHT RESULTS GO HERE")
+                                                       ])
 
 
 class Character:
