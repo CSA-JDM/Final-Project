@@ -287,10 +287,12 @@ class MainSequence:
         self.text_box = TextBox(canvas, x=x, y=y, length=930, height=620,
                                 text=f"Hello, {self.username}, and welcome to 'In Memoriam!'")
         self.text_input = TextInput(canvas, x=x, y=y+630, length=930, height=35,
-                                    command=self.check_typed)
+                                    command=lambda event: self.check_typed())
 
         self.inventory_text_box = TextBox(self.canvas, x=955, y=10, length=325, height=620,
-                                          text="Inventory:")
+                                          text="              Inventory:\n\n"
+                                               "Health Potion\n"
+                                               "Stick")
 
         self.health_bar_text_box = TextBox(self.canvas, x=10, y=680, length=460, height=35,
                                            text="Health:")
@@ -309,7 +311,7 @@ class MainSequence:
                 lambda: FightSequence(self, self.buttons)
         }
 
-    def check_typed(self, *args):
+    def check_typed(self):
         for command in self.commands:
             if self.text_input.text.lower() in command:
                 self.commands[command]()
@@ -324,53 +326,106 @@ class MainSequence:
 class FightSequence:
     def __init__(self, main_sequence, buttons):
         self.main_sequence = main_sequence
-        self.buttons = buttons
-        self.main_sequence.text_box.update(y=230, height=400, text="ENCOUNTER GOES HERE")
+        self.ms_buttons = buttons
+        self.buttons = {}
+        self.enemy = Enemy(self.main_sequence, "Goblin", "Enemy")
+        self.main_sequence.text_box.update(y=110, height=520,
+                                           text=f"You have encountered {self.enemy.type} {self.enemy.name}!")
         setattr(self.main_sequence.text_input, "active", False)
-        self.main_sequence.canvas.after(0, lambda:
-                                        [self.main_sequence.canvas.unbind_all("<Key>"),
-                                         self.main_sequence.canvas.unbind_all("<Return>"),
-                                         self.main_sequence.canvas.itemconfig(self.main_sequence.text_input.text_item,
-                                                                              state="hidden"),
-                                         self.main_sequence.canvas.itemconfig(self.main_sequence.text_input.rect_item,
-                                                                              state="hidden")
-                                         ])
-        self.fight_button = Button(self.main_sequence.canvas, x=10, y=640, length=100, height=35, text="Fight")
-        self.magic_button = Button(self.main_sequence.canvas, x=120, y=640, length=100, height=35, text="Magic")
-        self.items_button = Button(self.main_sequence.canvas, x=230, y=640, length=100, height=35, text="Items")
-        self.run_button = Button(self.main_sequence.canvas, x=340, y=640, length=100, height=35, text="Run",
-                                 command=self.end_fight)
+        self.main_sequence.canvas.after(
+            0, lambda: [
+                self.main_sequence.canvas.unbind_all("<Key>"),
+                self.main_sequence.canvas.unbind_all("<Return>"),
+                self.main_sequence.canvas.itemconfig(self.main_sequence.text_input.text_item,
+                                                     state="hidden"),
+                self.main_sequence.canvas.itemconfig(self.main_sequence.text_input.rect_item,
+                                                     state="hidden")
+            ]
+        )
+        self.buttons["fight_button"] = Button(self.main_sequence.canvas, x=10, y=640, length=100, height=35,
+                                              text="Fight")
+        self.buttons["magic_button"] = Button(self.main_sequence.canvas, x=120, y=640, length=100, height=35,
+                                              text="Magic")
+        self.buttons["items_button"] = Button(self.main_sequence.canvas, x=230, y=640, length=100, height=35,
+                                              text="Items")
+        self.buttons["run_button"] = Button(self.main_sequence.canvas, x=340, y=640, length=100, height=35, text="Run",
+                                            command=self.end_fight)
 
     def end_fight(self):
-        self.main_sequence.canvas.delete(self.fight_button.text_item)
-        self.main_sequence.canvas.delete(self.fight_button.rect_item)
-        self.main_sequence.canvas.delete(self.magic_button.text_item)
-        self.main_sequence.canvas.delete(self.magic_button.rect_item)
-        self.main_sequence.canvas.delete(self.items_button.text_item)
-        self.main_sequence.canvas.delete(self.items_button.rect_item)
-        self.main_sequence.canvas.delete(self.run_button.text_item)
-        self.main_sequence.canvas.delete(self.run_button.rect_item)
+        for x in self.buttons:
+            self.main_sequence.canvas.delete(self.buttons[x].text_item)
+            self.main_sequence.canvas.delete(self.buttons[x].rect_item)
         self.main_sequence.canvas.unbind("<Motion>")
         self.main_sequence.canvas.unbind("<Button-1>")
-        self.buttons["load_game_button"].update()
-        self.buttons["quit_button"].update()
-        self.main_sequence.canvas.after(0, lambda: [self.main_sequence.text_input.update(),
-                                                    self.main_sequence.canvas.bind_all(
-                                                        "<Key>",
-                                                        self.main_sequence.text_input.check_key),
-                                                    setattr(self.main_sequence.text_input, "active", True),
-                                                    self.main_sequence.text_box.update(text="FIGHT RESULTS GO HERE")
-                                                    ])
+        self.ms_buttons["load_game_button"].update()
+        self.ms_buttons["quit_button"].update()
+        self.main_sequence.canvas.after(
+            0, lambda: [
+                self.main_sequence.text_input.update(),
+                self.main_sequence.canvas.bind_all(
+                    "<Key>",
+                    self.main_sequence.text_input.check_key
+                ),
+                setattr(self.main_sequence.text_input, "active", True),
+                self.main_sequence.text_box.update(
+                    y=10, height=620,
+                    text="FIGHT RESULTS GO HERE"
+                ),
+                self.enemy.enemy_game_over()
+            ]
+        )
 
 
 class Character:
-    def __init__(self):
+    def __init__(self, main_sequence, type_):
+        self.main_sequence = main_sequence
+        self.type = type_
         self.character_type = {
-            "Player": [],
-            "NPC": [],
-            "Boss": [],
-            "Enemy": []
+            "Player": {
+                "Health": 100,
+                "Mana": 20,
+                "Items": self.main_sequence.inventory_text_box.text.split("\n")[2:]
+            },
+            "NPC": {},
+            "Boss": {},
+            "Enemy": {
+                "Health": 100,
+                "Mana": 10,
+                "Items": None
+            }
         }
+
+        self.health = self.character_type[self.type]["Health"]
+        self.mana = self.character_type[self.type]["Mana"]
+        self.items = self.character_type[self.type]["Items"]
+
+
+class Enemy(Character):
+    def __init__(self, main_sequence, name, type_):
+        super().__init__(main_sequence, type_)
+        self.name = name
+        self.text_boxes = {
+            "name_text_box":
+                TextBox(self.main_sequence.canvas, x=10, y=10, length=460, height=35,
+                        text=f"Name: {self.name}"),
+            "health_bar_text_box":
+                TextBox(self.main_sequence.canvas, x=10, y=60, length=460, height=35,
+                        text="Health:"),
+            "mana_bar_text_box":
+                TextBox(self.main_sequence.canvas, x=480, y=60, length=460, height=35,
+                        text="Mana:")
+        }
+
+        self.health_bar = self.text_boxes["health_bar_text_box"].make_line(93, 77, 460, 77, fill="red")
+
+        self.mana_bar = self.text_boxes["mana_bar_text_box"].make_line(550, 77, 930, 77, fill="blue")
+
+    def enemy_game_over(self):
+        for x in self.text_boxes:
+            self.main_sequence.canvas.delete(self.text_boxes[x].text_item)
+            self.main_sequence.canvas.delete(self.text_boxes[x].rect_item)
+        self.main_sequence.canvas.delete(self.health_bar)
+        self.main_sequence.canvas.delete(self.mana_bar)
 
 
 class Audio:
