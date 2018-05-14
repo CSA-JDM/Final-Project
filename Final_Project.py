@@ -18,9 +18,9 @@ Proposal should be professional, slide show with examples.
 Must be an in depth description of what you want to do, why, what it will do, and how it is a useful program.
 It will also need a time line of what you will have done and when.
 """
+from Canvas_Objects import *
 import turtle
 import time
-from Canvas_Objects import *
 import random
 import mp3play
 
@@ -35,7 +35,7 @@ class App:
 
         # Canvas Initialization
         self.canvas = turtle.Canvas(self.root)
-        self.canvas.config(width=1280, height=720)
+        self.canvas.config(width=1280, height=720, background="white")
         self.canvas.place(x=0, y=0)
 
         # Audio Initialization
@@ -129,13 +129,14 @@ class MainSequence:
         self.y = y
         self.username = username
         self.buttons = buttons
+        self.in_fight = False
 
         self.text_box = TextBox(canvas, x=x, y=y, length=900, height=620,
                                 text=f"Hello, {self.username}, and welcome to 'In Memoriam!'")
         self.text_input = TextInput(canvas, x=x, y=y+630, length=900, height=35,
                                     command=lambda event: self.check_typed())
 
-        self.inventory_text_box = TextBox(self.canvas, x=925, y=10, length=325, height=620,
+        self.inventory_text_box = TextBox(self.canvas, x=925, y=10, length=355, height=620,
                                           text="               Inventory\n\n")
 
         self.inventory = {
@@ -171,7 +172,7 @@ class MainSequence:
                     lambda: [self.canvas.dchars(self.text_box.text_item, 0, len(self.text_box.text)),
                              setattr(self.text_box, "text", "")],
                 ("attack", "fight"):
-                    lambda: FightSequence(self),
+                    lambda: setattr(self, "in_fight", FightSequence(self)),
                 (f"add {' '.join([x for x in self.text_input.text.lower().split()[1:]])}",):
                     lambda: self.inventory_update(
                         text=(f"{' '.join([x.title() for x in self.text_input.text.lower().split()[1:]])}", 1)
@@ -222,6 +223,9 @@ class MainSequence:
             item_space += 35
         self.buttons["load_game_button"].update()
         self.buttons["quit_button"].update()
+        if type(self.in_fight) is FightSequence:
+            self.in_fight.buttons["run_button"].update()
+
 
     def item_options(self, item, event):
         self.canvas.unbind("<Motion>")
@@ -255,21 +259,38 @@ class FightSequence:
             ]
         )
         self.buttons["fight_button"] = Button(self.main_sequence.canvas, x=10, y=640, length=65, height=35,
-                                              text="Fight", command=lambda event: self.attack_attempt(event))
+                                              text="Fight", command=lambda event: self.attack_menu(event))
         self.buttons["magic_button"] = Button(self.main_sequence.canvas, x=135, y=640, length=80, height=35,
                                               text="Magic", command=None)
         self.buttons["run_button"] = Button(self.main_sequence.canvas, x=1070, y=640, length=60, height=35,
                                             text="Run", command=self.end_fight)
 
-    def attack_attempt(self, *args):
+    def attack_menu(self, *args):
         self.main_sequence.canvas.unbind("<Motion>")
+        self.main_sequence.canvas.unbind("<Button-1>")
         self.buttons["run_button"].update()
         self.main_sequence.buttons["load_game_button"].update()
         self.main_sequence.buttons["quit_button"].update()
         self.buttons["melee_button"] = Button(self.main_sequence.canvas, 10, 595, length=80, height=35,
-                                              text="Melee")
+                                              text="Melee", command=self.melee_menu)
         self.buttons["ranged_button"] = Button(self.main_sequence.canvas, 110, 595, length=95, height=35,
-                                               text="Ranged")
+                                               text="Ranged", command=self.ranged_menu)
+
+    def melee_menu(self, *args):
+        self.main_sequence.canvas.unbind("<Motion>")
+        self.main_sequence.canvas.unbind("<Button-1>")
+        self.buttons["run_button"].update()
+        self.main_sequence.buttons["load_game_button"].update()
+        self.main_sequence.buttons["quit_button"].update()
+        self.buttons["light_button"] = Button(self.main_sequence.canvas, 10, 550, length=150, height=35,
+                                              text="Light Attack", command=None)
+        self.buttons["medium_button"] = Button(self.main_sequence.canvas, 170, 550, length=180, height=35,
+                                              text="Medium Attack", command=None)
+        self.buttons["heavy_button"] = Button(self.main_sequence.canvas, 360, 550, length=160, height=35,
+                                              text="Heavy Attack", command=None)
+
+    def ranged_menu(self, *args):
+        pass
 
     def end_fight(self, *args):
         for x in self.buttons:
@@ -292,7 +313,9 @@ class FightSequence:
                     y=10, height=620,
                     text="FIGHT RESULTS GO HERE"
                 ),
-                self.enemy.enemy_game_over()
+                self.enemy.enemy_game_over(),
+                setattr(self.main_sequence, "in_fight", False),
+                self.main_sequence.inventory_update()
             ]
         )
 
