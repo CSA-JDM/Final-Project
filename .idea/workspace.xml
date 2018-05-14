@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ece6a703-513d-468c-8caf-a8b94ae4272a" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/Canvas_Objects.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Final_Project.py" beforeDir="false" afterPath="$PROJECT_DIR$/Final_Project.py" afterDir="false" />
     </list>
@@ -17,14 +18,24 @@
       <file leaf-file-name="Final_Project.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Final_Project.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="401">
-              <caret line="358" column="77" lean-forward="true" selection-start-line="358" selection-start-column="77" selection-end-line="358" selection-end-column="77" />
+            <state relative-caret-position="272">
+              <caret line="234" lean-forward="true" selection-start-line="234" selection-end-line="234" />
               <folding>
-                <element signature="e#1201#1214#0" expanded="true" />
-                <element signature="e#5209#7648#0" />
-                <element signature="e#7683#9339#0" />
-                <element signature="e#9375#9767#0" />
-                <element signature="e#9805#12270#0" />
+                <element signature="n#!!doc" />
+                <element signature="e#70#1200#1" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Canvas_Objects.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Canvas_Objects.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="221">
+              <caret line="149" column="31" lean-forward="true" selection-start-line="149" selection-start-column="31" selection-end-line="149" selection-end-column="31" />
+              <folding>
+                <element signature="n#!!doc" />
+                <element signature="e#70#1200#1" />
               </folding>
             </state>
           </provider>
@@ -57,6 +68,8 @@
       <find>text</find>
       <find>.update(</find>
       <find>&quot;active&quot;, False</find>
+      <find>event</find>
+      <find>Button</find>
     </findStrings>
     <replaceStrings>
       <replace>self.screen</replace>
@@ -72,6 +85,7 @@
       <list>
         <option value="$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/site-packages/mp3play/windows.py" />
         <option value="$PROJECT_DIR$/test.py" />
+        <option value="$PROJECT_DIR$/Canvas_Objects.py" />
         <option value="$PROJECT_DIR$/Final_Project.py" />
       </list>
     </option>
@@ -87,7 +101,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -99,6 +112,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -117,6 +131,42 @@
     </option>
   </component>
   <component name="RunManager" selected="Python.Final_Project">
+    <configuration name="Canvas_Objects" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="FinalProject" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Canvas_Objects.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <configuration name="False_Insignia" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="FinalProject" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$USER_HOME$/PycharmProjects/False_Insignia" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$USER_HOME$/PycharmProjects/False_Insignia/False_Insignia.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
     <configuration name="Final_Project" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="FinalProject" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -175,10 +225,14 @@
       <item itemvalue="Python.Final_Project" />
       <item itemvalue="Python.windows" />
       <item itemvalue="Python.test" />
+      <item itemvalue="Python.Canvas_Objects" />
+      <item itemvalue="Python.False_Insignia" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.Final_Project" />
+        <item itemvalue="Python.Canvas_Objects" />
+        <item itemvalue="Python.False_Insignia" />
         <item itemvalue="Python.test" />
         <item itemvalue="Python.windows" />
       </list>
@@ -198,19 +252,19 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <frame x="-8" y="-8" width="1616" height="876" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.500625" side_tool="true" weight="0.3298292" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.499375" visible="true" weight="0.3134963" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Python Console" order="7" weight="0.3298292" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.499375" visible="true" weight="0.31143233" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Terminal" order="7" sideWeight="0.499375" weight="0.32837406" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.39947438" />
+      <window_info anchor="bottom" id="Terminal" order="7" sideWeight="0.499375" weight="0.32720104" />
       <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.39947438" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -219,6 +273,25 @@
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Find" order="1" />
     </layout>
+    <layout-to-restore>
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.499375" visible="true" weight="0.31143233" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Python Console" order="7" weight="0.3298292" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.39947438" />
+      <window_info anchor="bottom" id="Terminal" order="8" sideWeight="0.499375" weight="0.32720104" />
+      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.500625" side_tool="true" weight="0.3298292" />
+      <window_info anchor="bottom" id="Version Control" order="10" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+    </layout-to-restore>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
@@ -229,20 +302,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Final_Project.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="24" lean-forward="true" selection-start-line="24" selection-end-line="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Final_Project.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="578">
-          <caret line="34" column="19" lean-forward="true" selection-start-line="34" selection-start-column="19" selection-end-line="34" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Final_Project.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="493">
@@ -271,11 +330,8 @@
         <state relative-caret-position="379">
           <caret line="70" lean-forward="true" selection-start-line="70" selection-end-line="70" />
           <folding>
-            <element signature="e#1201#1214#0" expanded="true" />
-            <element signature="e#5209#7648#0" />
-            <element signature="e#7683#9339#0" />
-            <element signature="e#9375#9767#0" />
-            <element signature="e#9805#12270#0" />
+            <element signature="n#!!doc" />
+            <element signature="e#70#1200#1" />
           </folding>
         </state>
       </provider>
@@ -285,11 +341,8 @@
         <state relative-caret-position="2091">
           <caret line="123" column="35" lean-forward="true" selection-start-line="123" selection-start-column="35" selection-end-line="123" selection-end-column="35" />
           <folding>
-            <element signature="e#1201#1214#0" expanded="true" />
-            <element signature="e#5209#7648#0" />
-            <element signature="e#7683#9339#0" />
-            <element signature="e#9375#9767#0" />
-            <element signature="e#9805#12270#0" />
+            <element signature="n#!!doc" />
+            <element signature="e#70#1200#1" />
           </folding>
         </state>
       </provider>
@@ -299,11 +352,8 @@
         <state relative-caret-position="1496">
           <caret line="88" column="38" lean-forward="true" selection-start-line="88" selection-start-column="38" selection-end-line="88" selection-end-column="38" />
           <folding>
-            <element signature="e#1201#1214#0" expanded="true" />
-            <element signature="e#5209#7648#0" />
-            <element signature="e#7683#9339#0" />
-            <element signature="e#9375#9767#0" />
-            <element signature="e#9805#12270#0" />
+            <element signature="n#!!doc" />
+            <element signature="e#70#1200#1" />
           </folding>
         </state>
       </provider>
@@ -313,11 +363,8 @@
         <state relative-caret-position="1020">
           <caret line="60" column="80" selection-start-line="60" selection-start-column="80" selection-end-line="60" selection-end-column="80" />
           <folding>
-            <element signature="e#1201#1214#0" expanded="true" />
-            <element signature="e#5209#7648#0" />
-            <element signature="e#7683#9339#0" />
-            <element signature="e#9375#9767#0" />
-            <element signature="e#9805#12270#0" />
+            <element signature="n#!!doc" />
+            <element signature="e#70#1200#1" />
           </folding>
         </state>
       </provider>
@@ -439,11 +486,8 @@
         <state relative-caret-position="791">
           <caret line="230" lean-forward="true" selection-start-line="230" selection-end-line="230" />
           <folding>
-            <element signature="e#1201#1214#0" expanded="true" />
-            <element signature="e#5209#7648#0" />
-            <element signature="e#7683#9339#0" />
-            <element signature="e#9375#9767#0" />
-            <element signature="e#9805#12270#0" />
+            <element signature="n#!!doc" />
+            <element signature="e#70#1200#1" />
           </folding>
         </state>
       </provider>
@@ -578,16 +622,31 @@
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/site-packages/mp3play/windows.py" />
     <entry file="file://$PROJECT_DIR$/test.py" />
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/tkinter/__init__.py" />
+    <entry file="file://$USER_HOME$/PycharmProjects/False_Insignia/False_Insignia.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="149">
+          <caret line="46" lean-forward="true" selection-start-line="46" selection-end-line="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Canvas_Objects.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="149" column="31" lean-forward="true" selection-start-line="149" selection-start-column="31" selection-end-line="149" selection-end-column="31" />
+          <folding>
+            <element signature="n#!!doc" />
+            <element signature="e#70#1200#1" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Final_Project.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="401">
-          <caret line="358" column="77" lean-forward="true" selection-start-line="358" selection-start-column="77" selection-end-line="358" selection-end-column="77" />
+        <state relative-caret-position="272">
+          <caret line="234" lean-forward="true" selection-start-line="234" selection-end-line="234" />
           <folding>
-            <element signature="e#1201#1214#0" expanded="true" />
-            <element signature="e#5209#7648#0" />
-            <element signature="e#7683#9339#0" />
-            <element signature="e#9375#9767#0" />
-            <element signature="e#9805#12270#0" />
+            <element signature="n#!!doc" />
+            <element signature="e#70#1200#1" />
           </folding>
         </state>
       </provider>
