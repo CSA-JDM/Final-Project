@@ -18,8 +18,7 @@ Proposal should be professional, slide show with examples.
 Must be an in depth description of what you want to do, why, what it will do, and how it is a useful program.
 It will also need a time line of what you will have done and when.
 """
-import Canvas_Objects
-import Game_Sequences
+
 import turtle
 import time
 import random
@@ -125,81 +124,16 @@ class App:
         pass
 
 
-class Character:
-    def __init__(self, main_sequence, type_):
-        self.main_sequence = main_sequence
-        self.type = type_
-        self.character_type = {
-            "Player": {
-                "Health": 100,
-                "Mana": 20,
-                "Items": self.main_sequence.inventory,
-                "Agility": 5,
-                "Attack": 5,
-                "Defense": 5,
-                "Luck": 2
-            },
-            "NPC": {},
-            "Boss": {},
-            "Enemy": {
-                "Health": 100,
-                "Mana": 10,
-                "Items": None,
-                "Agility": 5,
-                "Attack": 5,
-                "Defense": 5,
-                "Luck": 2
-            }
-        }
-
-        self.health = self.character_type[self.type]["Health"]
-        self.mana = self.character_type[self.type]["Mana"]
-        self.items = self.character_type[self.type]["Items"]
-        self.agility = self.character_type[self.type]["Agility"]
-        self.attack = self.character_type[self.type]["Attack"]
-        self.defense = self.character_type[self.type]["Defense"]
-        self.luck = self.character_type[self.type]["Luck"]
-
-
-class Enemy(Character):
-    def __init__(self, main_sequence, name):
-        super().__init__(main_sequence, "Enemy")
-        self.name = name
-        self.text_boxes = {
-            "name_text_box":
-                Canvas_Objects.TextBox(self.main_sequence.canvas, x=10, y=10, length=445, height=35,
-                                       text=f"Name: {self.name}"),
-            "health_bar_text_box":
-                Canvas_Objects.TextBox(self.main_sequence.canvas, x=10, y=60, length=445, height=35,
-                                       text="Health:"),
-            "mana_bar_text_box":
-                Canvas_Objects.TextBox(self.main_sequence.canvas, x=465, y=60, length=445, height=35,
-                                       text="Mana:")
-        }
-
-        self.health_bar = self.text_boxes["health_bar_text_box"].make_line(93, 77, 445, 77, fill="red")
-        self.health_bar_meter = 352
-
-        self.mana_bar = self.text_boxes["mana_bar_text_box"].make_line(535, 77, 900, 77, fill="blue")
-
-    def enemy_game_over(self):
-        for x in self.text_boxes:
-            self.main_sequence.canvas.delete(self.text_boxes[x].text_item)
-            self.main_sequence.canvas.delete(self.text_boxes[x].rect_item)
-        self.main_sequence.canvas.delete(self.health_bar)
-        self.main_sequence.canvas.delete(self.mana_bar)
-
-
 class Audio:
     def __init__(self, root, file):
         self.root = root
-        self.file = mp3play.load(file)
+        # self.file = mp3play.load(file)
         self.loop = True
 
     def play(self, loop=None):
         if loop is not None:
             self.loop = loop
-        self.file.play()
+        # self.file.play()
         if self.loop:
             self.root.after(157000, self.play)
 

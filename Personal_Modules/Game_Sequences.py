@@ -34,7 +34,7 @@ class MainSequence:
             "Health Potion": 1,
             "Mana Potion": 1
         }
-        self.player = Final_Project.Character(self, "Player")
+        self.player = Character(self, "Player")
         self.player_health_bar_meter = 352
         self.in_fight = False
         self.update_items = [
@@ -162,7 +162,7 @@ class FightSequence:
         self.buttons = {}
         self.counter = 1
         self.names = ["Goblin", "Wolf", "Slime", "Skeleton", "Zombie"]
-        self.enemy = Final_Project.Enemy(self.main_sequence, self.names[random.randint(0, len(self.names)-1)])
+        self.enemy = Enemy(self.main_sequence, self.names[random.randint(0, len(self.names)-1)])
         self.main_sequence.text_box.update(y=110, height=520,
                                            text=f"Encounter: {self.enemy.type} {self.enemy.name}!\n"
                                                 "You have the initial action.")
@@ -233,16 +233,6 @@ class FightSequence:
             else:
                 self.counter = 1
                 self.main_sequence.text_box.update(text="You missed!", add=True)
-        if "melee_button" in self.buttons:
-            del self.buttons["melee_button"]
-        if "ranged_button" in self.buttons:
-            del self.buttons["ranged_button"]
-        if "light_button" in self.buttons:
-            del self.buttons["light_button"]
-        if "medium_button" in self.buttons:
-            del self.buttons["medium_button"]
-        if "heavy_button" in self.buttons:
-            del self.buttons["heavy_button"]
 
         old_health_p = self.main_sequence.player.health
         if type_chance * (self.enemy.agility * .2) > round(random.randint(0, 100) * 0.01, 2):
@@ -262,7 +252,7 @@ class FightSequence:
                     add=True
                 )
             except ZeroDivisionError:
-                self.end_fight("Lost")
+                self.end_fight("You Lost!")
         else:
             if self.main_sequence.text_box.text.split("\n")[-1] == f"The {self.enemy.name} missed!" or \
                     self.main_sequence.text_box.text.split("\n")[-1] ==\
@@ -275,9 +265,20 @@ class FightSequence:
             else:
                 self.counter = 1
                 self.main_sequence.text_box.update(text=f"The {self.enemy.name} missed!", add=True)
+
+        if "melee_button" in self.buttons:
+            del self.buttons["melee_button"]
+        if "ranged_button" in self.buttons:
+            del self.buttons["ranged_button"]
+        if "light_button" in self.buttons:
+            del self.buttons["light_button"]
+        if "medium_button" in self.buttons:
+            del self.buttons["medium_button"]
+        if "heavy_button" in self.buttons:
+            del self.buttons["heavy_button"]
         self.main_sequence.update_all()
 
-    def end_fight(self, *args):
+    def end_fight(self, end_text=None, *args):
         for x in self.buttons:
             self.main_sequence.canvas.delete(self.buttons[x].text_item)
             self.main_sequence.canvas.delete(self.buttons[x].rect_item)
@@ -294,10 +295,75 @@ class FightSequence:
                 self.main_sequence.text_input.selector(),
                 self.main_sequence.text_box.update(
                     y=10, height=620,
-                    text="FIGHT RESULTS GO HERE"
+                    text=end_text
                 ),
                 self.enemy.enemy_game_over(),
                 setattr(self.main_sequence, "in_fight", False),
                 self.main_sequence.inventory_update()
             ]
         )
+
+
+class Character:
+    def __init__(self, main_sequence, type_):
+        self.main_sequence = main_sequence
+        self.type = type_
+        self.character_type = {
+            "Player": {
+                "Health": 100,
+                "Mana": 20,
+                "Items": self.main_sequence.inventory,
+                "Agility": 5,
+                "Attack": 5,
+                "Defense": 5,
+                "Luck": 2
+            },
+            "NPC": {},
+            "Boss": {},
+            "Enemy": {
+                "Health": 100,
+                "Mana": 10,
+                "Items": None,
+                "Agility": 5,
+                "Attack": 5,
+                "Defense": 5,
+                "Luck": 2
+            }
+        }
+
+        self.health = self.character_type[self.type]["Health"]
+        self.mana = self.character_type[self.type]["Mana"]
+        self.items = self.character_type[self.type]["Items"]
+        self.agility = self.character_type[self.type]["Agility"]
+        self.attack = self.character_type[self.type]["Attack"]
+        self.defense = self.character_type[self.type]["Defense"]
+        self.luck = self.character_type[self.type]["Luck"]
+
+
+class Enemy(Character):
+    def __init__(self, main_sequence, name):
+        super().__init__(main_sequence, "Enemy")
+        self.name = name
+        self.text_boxes = {
+            "name_text_box":
+                TextBox(self.main_sequence.canvas, x=10, y=10, length=445, height=35,
+                        text=f"Name: {self.name}"),
+            "health_bar_text_box":
+                TextBox(self.main_sequence.canvas, x=10, y=60, length=445, height=35,
+                        text="Health:"),
+            "mana_bar_text_box":
+                TextBox(self.main_sequence.canvas, x=465, y=60, length=445, height=35,
+                        text="Mana:")
+        }
+
+        self.health_bar = self.text_boxes["health_bar_text_box"].make_line(93, 77, 445, 77, fill="red")
+        self.health_bar_meter = 352
+
+        self.mana_bar = self.text_boxes["mana_bar_text_box"].make_line(535, 77, 900, 77, fill="blue")
+
+    def enemy_game_over(self):
+        for x in self.text_boxes:
+            self.main_sequence.canvas.delete(self.text_boxes[x].text_item)
+            self.main_sequence.canvas.delete(self.text_boxes[x].rect_item)
+        self.main_sequence.canvas.delete(self.health_bar)
+        self.main_sequence.canvas.delete(self.mana_bar)
