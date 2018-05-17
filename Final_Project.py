@@ -21,7 +21,8 @@ It will also need a time line of what you will have done and when.
 
 import turtle
 import time
-import random
+import Personal_Modules.Canvas_Objects as Canvas_Objects
+import Personal_Modules.Game_Sequences
 import mp3play
 
 
@@ -39,7 +40,7 @@ class App:
         self.canvas.place(x=0, y=0)
 
         # Audio Initialization
-        sayo_nara = Audio(self.root, r"..\Final-Project\Sayo-nara.mp3")
+        sayo_nara = Audio(self.root, r"..\Final-Project\Music\Sayo-nara.mp3")
         sayo_nara.play(loop=True)
 
         # Item Dictionaries
@@ -83,13 +84,13 @@ class App:
         self.text_boxes["title_text_box"] = Canvas_Objects.TextBox(self.canvas, x=10, y=10, text="In Memoriam",
                                                                    font=("Times New Roman", 30, "bold"))
         self.buttons["new_game_button"] = Canvas_Objects.Button(self.canvas, x=10, y=110, length=130, height=35,
-                                                                text="New Game", command=self.username)
+                                                                text="New Game", command=lambda event: self.username())
         self.buttons["load_game_button"] = Canvas_Objects.Button(self.canvas, x=10, y=185, length=135, height=35,
                                                                  text="Load Game", command=None)
         self.buttons["quit_button"] = Canvas_Objects.Button(self.canvas, x=10, y=260, length=60, height=35, text="Quit",
                                                             command=lambda event: self.root.destroy())
 
-    def username(self, *args):
+    def username(self):
         self.clear_all()
         self.text_boxes["title_text_box"] = Canvas_Objects.TextBox(self.canvas, x=10, y=30, text="Username:",
                                                                    font=("Times New Roman", 20, "normal"))
@@ -107,11 +108,14 @@ class App:
 
     def main_sequence(self):
         self.clear_all()
-        self.main_user_input = Game_Sequences.MainSequence(self.canvas, 10, 10,
-                                                           self.text_inputs['username_text_input'].text,
-                                                           self.buttons)
-        self.buttons["load_game_button"].update()
-        self.buttons["quit_button"].update()
+        self.buttons["save_game_button"] = Canvas_Objects.Button(self.canvas, x=927, y=615, length=130, height=35,
+                                                                 text="Save Game")
+        self.main_user_input = Personal_Modules.Game_Sequences.MainSequence(
+            self.canvas, 10, 10, self.text_inputs['username_text_input'].text, self.buttons
+        )
+        self.text_boxes["time_text_box"].update(y=625)
+        self.buttons["load_game_button"].update(y=655)
+        self.buttons["quit_button"].update(y=655)
 
     def clear_all(self):
         self.canvas.delete("all")
@@ -127,13 +131,13 @@ class App:
 class Audio:
     def __init__(self, root, file):
         self.root = root
-        # self.file = mp3play.load(file)
+        self.file = mp3play.load(file)
         self.loop = True
 
     def play(self, loop=None):
         if loop is not None:
             self.loop = loop
-        # self.file.play()
+        self.file.play()
         if self.loop:
             self.root.after(157000, self.play)
 

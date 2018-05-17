@@ -1,6 +1,6 @@
 # Jacob Meadows
 # 4th Period, Computer Programming
-# April 16th, 2018
+# April 15th, 2018
 """
 This will be taking place over the next few weeks, with minor reviews put in place at the end of each week.
 You will also have to show me progress each week on the program.
@@ -18,9 +18,9 @@ Proposal should be professional, slide show with examples.
 Must be an in depth description of what you want to do, why, what it will do, and how it is a useful program.
 It will also need a time line of what you will have done and when.
 """
-from Canvas_Objects import *
-import Final_Project
+from .Canvas_Objects import *
 import random
+import time
 
 
 class MainSequence:
@@ -39,15 +39,18 @@ class MainSequence:
         self.in_fight = False
         self.update_items = [
             self.buttons["load_game_button"],
+            self.buttons["save_game_button"],
             self.buttons["quit_button"]
         ]
 
-        self.text_box = TextBox(canvas, x=x, y=y, length=900, height=620,
-                                text=f"Hello, {self.username}, and welcome to 'In Memoriam!'")
-        self.text_input = TextInput(canvas, x=x, y=y+630, length=900, height=35,
+        self.text_box = TextBox(canvas, x=x, y=y, length=900, height=600,
+                                text=f"Hello, {self.username}, and welcome to 'In Memoriam!'\n"
+                                     "Currently, you can only experience and interact in random encounters by typing "
+                                     "'fight', but I plan on adding more over time.")
+        self.text_input = TextInput(canvas, x=x, y=y+605, length=900, height=35,
                                     command=lambda event: self.check_typed())
 
-        self.inventory_text_box = TextBox(self.canvas, x=925, y=10, length=355, height=620,
+        self.inventory_text_box = TextBox(self.canvas, x=925, y=10, length=355, height=600,
                                           text="               Inventory\n\n")
 
         self.inventory_buttons = {}
@@ -60,15 +63,21 @@ class MainSequence:
             item_space += 35
             self.update_items += [self.inventory_buttons[item]]
 
-        self.health_bar_text_box = TextBox(self.canvas, x=10, y=680, length=445, height=35,
+        self.health_bar_text_box = TextBox(self.canvas, x=10, y=655, length=445, height=35,
                                            text="Health:")
-        self.health_bar_line = self.health_bar_text_box.make_line(93, 698, 445, 698, fill="red")
+        self.health_bar_line = self.health_bar_text_box.make_line(93, 673, 445, 673, fill="red", width=20)
 
-        self.mana_bar_text_box = TextBox(self.canvas, x=465, y=680, length=445, height=35,
+        self.mana_bar_text_box = TextBox(self.canvas, x=465, y=655, length=445, height=35,
                                          text="Mana:")
-        self.mana_bar_line = self.mana_bar_text_box.make_line(535, 698, 900, 698, fill="blue")
+        self.mana_bar_line = self.mana_bar_text_box.make_line(535, 673, 900, 673, fill="blue", width=20)
+
+        self.exp_bar_text_box = TextBox(self.canvas, x=10, y=695, length=1270, height=20,
+                                        font=("Times New Roman", 10, "normal"), text="Exp:")
+
+        self.exp_bar_line = self.exp_bar_text_box.make_line(40, 705, 1265, 705, fill="gray", width=10)
 
     def check_typed(self):
+        self.text_input.text = self.text_input.text.strip(" ")
         if self.text_input.text != "":
             self.commands = {
                 ("help", "support", "aide", "aid", "commands"):
@@ -151,9 +160,6 @@ class MainSequence:
         self.canvas.unbind("<Button-1>")
         for item in self.update_items:
             item.update()
-        if self.in_fight:
-            for button in self.in_fight.buttons.values():
-                button.update()
 
 
 class FightSequence:
@@ -163,8 +169,8 @@ class FightSequence:
         self.counter = 1
         self.names = ["Goblin", "Wolf", "Slime", "Skeleton", "Zombie"]
         self.enemy = Enemy(self.main_sequence, self.names[random.randint(0, len(self.names)-1)])
-        self.main_sequence.text_box.update(y=110, height=520,
-                                           text=f"Encounter: {self.enemy.type} {self.enemy.name}!\n"
+        self.main_sequence.text_box.update(y=110, height=500,
+                                           text=f"Encounter: Level 1 {self.enemy.type} {self.enemy.name}!\n"
                                                 "You have the initial action.")
         setattr(self.main_sequence.text_input, "active", False)
         self.main_sequence.canvas.after(
@@ -177,38 +183,39 @@ class FightSequence:
                                                      state="hidden")
             ]
         )
-        self.buttons["fight_button"] = Button(self.main_sequence.canvas, x=10, y=640, length=65, height=35,
-                                              text="Fight", command=lambda event: self.attack_menu(event))
-        self.buttons["magic_button"] = Button(self.main_sequence.canvas, x=135, y=640, length=80, height=35,
+        self.buttons["fight_button"] = Button(self.main_sequence.canvas, x=10, y=615, length=65, height=35,
+                                              text="Fight", command=lambda event: self.attack_menu())
+        self.buttons["magic_button"] = Button(self.main_sequence.canvas, x=135, y=615, length=80, height=35,
                                               text="Magic", command=None)
-        self.buttons["run_button"] = Button(self.main_sequence.canvas, x=1070, y=640, length=60, height=35,
-                                            text="Run", command=self.end_fight)
+        self.buttons["run_button"] = Button(self.main_sequence.canvas, x=1072, y=615, length=55, height=35,
+                                            text="Run", command=lambda event: self.end_fight("You ran away!"))
         self.main_sequence.update_items += [x for x in self.buttons.values()]
 
-    def attack_menu(self, *args):
+    def attack_menu(self):
         self.main_sequence.update_all()
-        self.buttons["melee_button"] = Button(self.main_sequence.canvas, 10, 595, length=80, height=35,
-                                              text="Melee", command=self.melee_menu)
-        self.buttons["ranged_button"] = Button(self.main_sequence.canvas, 110, 595, length=95, height=35,
-                                               text="Ranged", command=self.ranged_menu)
-
-    def melee_menu(self, *args):
-        self.main_sequence.update_all()
-        self.buttons["light_button"] = Button(self.main_sequence.canvas, 10, 550, length=150, height=35,
-                                              text="Light Attack", command=lambda event: self.attack_chance(.75, .5))
-        self.buttons["medium_button"] = Button(self.main_sequence.canvas, 170, 550, length=180, height=35,
-                                               text="Medium Attack", command=lambda event: self.attack_chance(.5, .75))
-        self.buttons["heavy_button"] = Button(self.main_sequence.canvas, 360, 550, length=160, height=35,
-                                              text="Heavy Attack", command=lambda event: self.attack_chance(.25, 1))
-
-    def ranged_menu(self, *args):
-        pass
+        TextBox(self.main_sequence.canvas, 10, 440, length=900, height=190)
+        TextBox(self.main_sequence.canvas, 10, 450, text="Melee Options:")
+        TextBox(self.main_sequence.canvas, 10, 540, text="Ranged Options:")
+        self.buttons["light_button"] = Button(self.main_sequence.canvas, 10, 495, length=150, height=35,
+                                              text="Light Attack", command=lambda event: self.attack_chance(.75, .5),
+                                              highlighted_command=lambda event: self.attack_stats((.75, .5), event))
+        self.buttons["medium_button"] = Button(self.main_sequence.canvas, 170, 495, length=180, height=35,
+                                               text="Medium Attack", command=lambda event: self.attack_chance(.5, .75),
+                                               highlighted_command=lambda event: self.attack_stats((.5, .75), event))
+        self.buttons["heavy_button"] = Button(self.main_sequence.canvas, 360, 495, length=155, height=35,
+                                              text="Heavy Attack", command=lambda event: self.attack_chance(.25, 1),
+                                              highlighted_command=lambda event: self.attack_stats((.25, 1), event))
+        self.buttons["light_arrow_button"] = Button(
+            self.main_sequence.canvas, 10, 585, length=150, height=35, text="Light Arrow",
+            command=lambda event: self.attack_chance(.75, .5),
+            highlighted_command=lambda event: self.attack_stats((.75, .5), event)
+        )
 
     def attack_chance(self, type_chance, type_nerf):
         old_health = self.enemy.health
         if type_chance*(self.main_sequence.player.agility*.2) > round(random.randint(0, 100) * 0.01, 2):
-            if self.enemy.health - self.main_sequence.player.attack * type_nerf > 0:
-                self.enemy.health -= self.main_sequence.player.attack * type_nerf
+            if self.enemy.health - round(self.main_sequence.player.attack * type_nerf) > 0:
+                self.enemy.health -= round(self.main_sequence.player.attack * type_nerf)
             else:
                 self.enemy.health = 0
             self.main_sequence.canvas.delete(self.enemy.health_bar)
@@ -217,12 +224,20 @@ class FightSequence:
                 self.enemy.health_bar = self.enemy.text_boxes["health_bar_text_box"].make_line(
                     93, 77, 93 + self.enemy.health_bar_meter, 77, fill="red"
                 )
-                self.main_sequence.text_box.update(
-                    text=f"You dealt {self.main_sequence.player.attack * type_nerf} damage to the {self.enemy.name}!",
-                    add=True
-                )
+                if self.main_sequence.text_box.text.count("\n") < 15:
+                    self.main_sequence.text_box.update(
+                        text=f"You dealt {round(self.main_sequence.player.attack * type_nerf)} "
+                             f"damage to the {self.enemy.name}!",
+                        add=True
+                    )
+                else:
+                    self.main_sequence.text_box.update(
+                        text=f"You dealt {round(self.main_sequence.player.attack * type_nerf)} "
+                             f"damage to the {self.enemy.name}!",
+                        add=False
+                    )
             except ZeroDivisionError:
-                self.end_fight("Won")
+                self.end_fight("You Won!")
         else:
             if self.main_sequence.text_box.text.split("\n")[-1] == "You missed!" or \
                     self.main_sequence.text_box.text.split("\n")[-1] == f"You missed! x{self.counter}":
@@ -232,25 +247,40 @@ class FightSequence:
                 self.main_sequence.text_box.update()
             else:
                 self.counter = 1
-                self.main_sequence.text_box.update(text="You missed!", add=True)
+                if self.main_sequence.text_box.text.count("\n") < 15:
+                    self.main_sequence.text_box.update(text="You missed!", add=True)
+                else:
+                    self.main_sequence.text_box.update(text="You missed!", add=False)
+        self.main_sequence.canvas.update()
+        time.sleep(2)
 
         old_health_p = self.main_sequence.player.health
-        if type_chance * (self.enemy.agility * .2) > round(random.randint(0, 100) * 0.01, 2):
-            if self.main_sequence.player.health - self.enemy.attack * type_nerf > 0:
-                self.main_sequence.player.health -= self.enemy.attack * type_nerf
+        enemy_types = ((.75, .5), (.5, .75), (.25, 1))
+        current_type = enemy_types[random.randint(0, 2)]
+        if current_type[0] * (self.enemy.agility * .2) > round(random.randint(0, 100) * 0.01, 2):
+            if self.main_sequence.player.health - round(self.enemy.attack * current_type[1]) > 0:
+                self.main_sequence.player.health -= round(self.enemy.attack * current_type[1])
             else:
                 self.main_sequence.player.health = 0
             self.main_sequence.canvas.delete(self.main_sequence.health_bar_line)
             try:
                 self.main_sequence.player_health_bar_meter *= (self.main_sequence.player.health / old_health_p)
-                self.main_sequence.player.health_bar_line =\
+                self.main_sequence.health_bar_line =\
                     self.main_sequence.health_bar_text_box.make_line(
                         93, 698, 93 + self.main_sequence.player_health_bar_meter, 698, fill="red"
                     )
-                self.main_sequence.text_box.update(
-                    text=f"The {self.enemy.name} dealt {self.main_sequence.player.attack * type_nerf} damage to you!",
-                    add=True
-                )
+                if self.main_sequence.text_box.text.count("\n") < 15:
+                    self.main_sequence.text_box.update(
+                        text=f"The {self.enemy.name} dealt {round(self.enemy.attack * current_type[1])} "
+                             f"damage to you!",
+                        add=True
+                    )
+                else:
+                    self.main_sequence.text_box.update(
+                        text=f"The {self.enemy.name} dealt {round(self.enemy.attack * current_type[1])} "
+                             f"damage to you!",
+                        add=False
+                    )
             except ZeroDivisionError:
                 self.end_fight("You Lost!")
         else:
@@ -264,7 +294,10 @@ class FightSequence:
                 self.main_sequence.text_box.update()
             else:
                 self.counter = 1
-                self.main_sequence.text_box.update(text=f"The {self.enemy.name} missed!", add=True)
+                if self.main_sequence.text_box.text.count("\n") < 15:
+                    self.main_sequence.text_box.update(text=f"The {self.enemy.name} missed!", add=True)
+                else:
+                    self.main_sequence.text_box.update(text=f"The {self.enemy.name} missed!", add=False)
 
         if "melee_button" in self.buttons:
             del self.buttons["melee_button"]
@@ -278,7 +311,13 @@ class FightSequence:
             del self.buttons["heavy_button"]
         self.main_sequence.update_all()
 
-    def end_fight(self, end_text=None, *args):
+    def attack_stats(self, type_, event):
+        return TextBox(
+            self.main_sequence.canvas, event.x+5, event.y, 255, 65, f"Chance to hit: {int(type_[0]*100)}%\n"
+                                                                    f"Power of attack: {int(type_[1]*100)}%"
+        )
+
+    def end_fight(self, end_text=None):
         for x in self.buttons:
             self.main_sequence.canvas.delete(self.buttons[x].text_item)
             self.main_sequence.canvas.delete(self.buttons[x].rect_item)
@@ -347,7 +386,7 @@ class Enemy(Character):
         self.text_boxes = {
             "name_text_box":
                 TextBox(self.main_sequence.canvas, x=10, y=10, length=445, height=35,
-                        text=f"Name: {self.name}"),
+                        text=f"Name: {self.name}, Level: 1"),
             "health_bar_text_box":
                 TextBox(self.main_sequence.canvas, x=10, y=60, length=445, height=35,
                         text="Health:"),

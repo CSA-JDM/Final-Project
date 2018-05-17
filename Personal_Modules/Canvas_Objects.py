@@ -66,8 +66,8 @@ class CanvasObject:
         return self.canvas.create_rectangle(self.x, self.y, self.x + self.length, self.y + self.height,
                                             fill=fill, tags=tags)
 
-    def make_line(self, x1, y1, x2, y2, fill="black", tags=None):
-        return self.canvas.create_line(x1, y1, x2, y2, width=20, fill=fill, tags=tags)
+    def make_line(self, x1, y1, x2, y2, width=1, fill="black", tags=None):
+        return self.canvas.create_line(x1, y1, x2, y2, width=width, fill=fill, tags=tags)
 
     def write(self, text=None, fill="black", tags=None):
         if text is None:
@@ -88,28 +88,38 @@ class CanvasObject:
 
 class Button(CanvasObject):
     def __init__(self, canvas, x=0.0, y=0.0, length=0.0, height=0.0, text="", font=("Times New Roman", 20, "normal"),
-                 width=0.0, command=None, highlight_command=None, tags=None):
+                 width=0.0, command=None, highlighted_command=None, tags=None):
         super().__init__(canvas, x=x, y=y, length=length, height=height, text=text, font=font, width=width,
                          command=command, tags=tags)
-        self.canvas.bind("<Motion>", lambda event: self.highlighter(event),
+        self.highlighted_command = highlighted_command
+        self.canvas.bind("<Motion>", lambda event: self.highlighter(self.highlighted_command, event),
                          add=True)
         if self.command is not None:
             self.canvas.bind("<Button-1>", lambda event: self.check_pos(self.command, event), add=True)
+        self.highlighted_command_object = None
         self.highlighted = False
 
     def update(self, x=None, y=None, length=None, height=None, text=None, add=False):
         super().update(x, y, length, height, text, add)
-        self.canvas.bind("<Motion>", self.highlighter, add=True)
+        self.canvas.bind("<Motion>", lambda event: self.highlighter(self.highlighted_command, event), add=True)
         if self.command is not None:
             self.canvas.bind("<Button-1>", lambda event: self.check_pos(self.command, event), add=True)
+        if self.highlighted_command_object is not None:
+            self.canvas.delete(self.highlighted_command_object.text_item)
+            self.canvas.delete(self.highlighted_command_object.rect_item)
         self.highlighted = False
 
-    def highlighter(self, event):
+    def highlighter(self, highlighted_command=None, event=None):
         if self.x-5 < event.x < self.x-5+self.length and self.y-3 < event.y < self.y-3+self.height:
             self.canvas.delete(self.text_item)
             self.canvas.delete(self.rect_item)
             self.rect_item = self.make_rect(fill="black")
             self.text_item = self.write(fill="white", tags=self.tags)
+            if self.highlighted_command_object is not None:
+                self.canvas.delete(self.highlighted_command_object.text_item)
+                self.canvas.delete(self.highlighted_command_object.rect_item)
+            if highlighted_command is not None:
+                self.highlighted_command_object = highlighted_command(event)
             self.highlighted = True
         else:
             if self.highlighted:
@@ -117,6 +127,9 @@ class Button(CanvasObject):
                 self.canvas.delete(self.rect_item)
                 self.rect_item = self.make_rect(tags=self.tags)
                 self.text_item = self.write(tags=self.tags)
+                if self.highlighted_command_object is not None:
+                    self.canvas.delete(self.highlighted_command_object.text_item)
+                    self.canvas.delete(self.highlighted_command_object.rect_item)
                 self.highlighted = False
 
 
