@@ -36,6 +36,7 @@ class MainSequence:
         }
         self.player = Character(self, "Player")
         self.player_health_bar_meter = 352
+        self.level = 1
         self.in_fight = False
         self.update_items = [
             self.buttons["load_game_button"],
@@ -72,9 +73,9 @@ class MainSequence:
         self.mana_bar_line = self.mana_bar_text_box.make_line(535, 673, 900, 673, fill="blue", width=20)
 
         self.exp_bar_text_box = TextBox(self.canvas, x=10, y=695, length=1270, height=20,
-                                        font=("Times New Roman", 10, "normal"), text="Exp:")
+                                        font=("Times New Roman", 10, "normal"), text=f"Level: {self.level}")
 
-        self.exp_bar_line = self.exp_bar_text_box.make_line(40, 705, 1265, 705, fill="gray", width=10)
+        self.exp_bar_line = self.exp_bar_text_box.make_line(60, 705, 1265, 705, fill="gray", width=10)
 
     def check_typed(self):
         self.text_input.text = self.text_input.text.strip(" ")
@@ -395,10 +396,10 @@ class Enemy(Character):
                         text="Mana:")
         }
 
-        self.health_bar = self.text_boxes["health_bar_text_box"].make_line(93, 77, 445, 77, fill="red")
+        self.health_bar = self.text_boxes["health_bar_text_box"].make_line(93, 77, 445, 77, fill="red", width=20)
         self.health_bar_meter = 352
 
-        self.mana_bar = self.text_boxes["mana_bar_text_box"].make_line(535, 77, 900, 77, fill="blue")
+        self.mana_bar = self.text_boxes["mana_bar_text_box"].make_line(535, 77, 900, 77, fill="blue", width=20)
 
     def enemy_game_over(self):
         for x in self.text_boxes:

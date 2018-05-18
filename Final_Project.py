@@ -131,15 +131,19 @@ class App:
 class Audio:
     def __init__(self, root, file):
         self.root = root
-        self.file = mp3play.load(file)
+        try:
+            self.file = mp3play.load(file)
+        except:
+            self.file = None
         self.loop = True
 
     def play(self, loop=None):
-        if loop is not None:
-            self.loop = loop
-        self.file.play()
-        if self.loop:
-            self.root.after(157000, self.play)
+        if self.file is not None:
+            if loop is not None:
+                self.loop = loop
+            self.file.play()
+            if self.loop:
+                self.root.after(157000, self.play)
 
 
 if __name__ == "__main__":
