@@ -95,7 +95,15 @@ class Button(CanvasObject):
         self.canvas.bind("<Motion>", lambda event: self.highlighter(self.highlighted_command, event),
                          add=True)
         if self.command is not None:
-            self.canvas.bind("<Button-1>", lambda event: self.check_pos(self.command, event), add=True)
+            self.canvas.bind("<Button-1>", lambda event: [
+                self.canvas.delete(self.highlighted_command_object.text_item)
+                if self.highlighted_command_object is not None
+                else None,
+                self.canvas.delete(self.highlighted_command_object.rect_item)
+                if self.highlighted_command_object is not None
+                else None,
+                self.check_pos(self.command, event)
+            ], add=True)
         self.highlighted_command_object = None
         self.highlighted = False
 
@@ -103,7 +111,15 @@ class Button(CanvasObject):
         super().update(x, y, length, height, text, add)
         self.canvas.bind("<Motion>", lambda event: self.highlighter(self.highlighted_command, event), add=True)
         if self.command is not None:
-            self.canvas.bind("<Button-1>", lambda event: self.check_pos(self.command, event), add=True)
+            self.canvas.bind("<Button-1>", lambda event: [
+                self.canvas.delete(self.highlighted_command_object.text_item)
+                if self.highlighted_command_object is not None
+                else None,
+                self.canvas.delete(self.highlighted_command_object.rect_item)
+                if self.highlighted_command_object is not None
+                else None,
+                self.check_pos(self.command, event)
+            ], add=True)
         if self.highlighted_command_object is not None:
             self.canvas.delete(self.highlighted_command_object.text_item)
             self.canvas.delete(self.highlighted_command_object.rect_item)

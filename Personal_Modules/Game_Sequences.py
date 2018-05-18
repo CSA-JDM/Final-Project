@@ -85,7 +85,12 @@ class MainSequence:
                     lambda: self.text_box.update(text="Available commands:\n"
                                                       "'clear' - clears the screen\n"
                                                       "'fight' - enters a random encounter\n"
-                                                      "'help' - pulls up this text", add=True),
+                                                      "'help' - pulls up this text", add=True)
+                    if self.text_box.text.count("\n") < 15
+                    else self.text_box.update(text="Available commands:\n"
+                                                   "'clear' - clears the screen\n"
+                                                   "'fight' - enters a random encounter\n"
+                                                   "'help' - pulls up this text", add=False),
                 ("clear", "clear screen", "clear all", "clearall", "clearscreen", "cls", "clr"):
                     lambda: [self.canvas.dchars(self.text_box.text_item, 0, len(self.text_box.text)),
                              setattr(self.text_box, "text", "")],
@@ -99,7 +104,11 @@ class MainSequence:
                     lambda: self.inventory_update(
                         text=(f"{' '.join([x.title() for x in self.text_input.text.lower().split()[1:]])}", 1),
                         add=False
-                    )
+                    ),
+                ("print items",):
+                    lambda: self.text_box.update(text=str(list(self.canvas.find_all())), add=True)
+                    if self.text_box.text.count("\n") < 15
+        else self.text_box.update(text=str(list(self.canvas.find_all())), add=False)
             }
             for command in self.commands:
                 if self.text_input.text.lower() in command:
@@ -108,7 +117,10 @@ class MainSequence:
             for y in [x for x in list(self.commands.keys())]:
                 command_keys += y
             if self.text_input.text.lower() not in command_keys:
-                self.text_box.update(text="Unknown command/input. If lost, type 'help'.", add=True)
+                if self.text_box.text.count("\n") < 17:
+                    self.text_box.update(text="Unknown command/input. If lost, type 'help'.", add=True)
+                else:
+                    self.text_box.update(text="Unknown command/input. If lost, type 'help'.", add=False)
             self.text_input.update(text="")
 
     def inventory_update(self, text=None, add=True):
@@ -194,20 +206,20 @@ class FightSequence:
 
     def attack_menu(self):
         self.main_sequence.update_all()
-        TextBox(self.main_sequence.canvas, 10, 440, length=900, height=190)
-        TextBox(self.main_sequence.canvas, 10, 450, text="Melee Options:")
-        TextBox(self.main_sequence.canvas, 10, 540, text="Ranged Options:")
-        self.buttons["light_button"] = Button(self.main_sequence.canvas, 10, 495, length=150, height=35,
+        TextBox(self.main_sequence.canvas, 10, 420, length=900, height=190)
+        TextBox(self.main_sequence.canvas, 10, 420, text="Melee Options:")
+        TextBox(self.main_sequence.canvas, 10, 510, text="Ranged Options:")
+        self.buttons["light_button"] = Button(self.main_sequence.canvas, 10, 465, length=150, height=35,
                                               text="Light Attack", command=lambda event: self.attack_chance(.75, .5),
                                               highlighted_command=lambda event: self.attack_stats((.75, .5), event))
-        self.buttons["medium_button"] = Button(self.main_sequence.canvas, 170, 495, length=180, height=35,
+        self.buttons["medium_button"] = Button(self.main_sequence.canvas, 170, 465, length=180, height=35,
                                                text="Medium Attack", command=lambda event: self.attack_chance(.5, .75),
                                                highlighted_command=lambda event: self.attack_stats((.5, .75), event))
-        self.buttons["heavy_button"] = Button(self.main_sequence.canvas, 360, 495, length=155, height=35,
+        self.buttons["heavy_button"] = Button(self.main_sequence.canvas, 360, 465, length=155, height=35,
                                               text="Heavy Attack", command=lambda event: self.attack_chance(.25, 1),
                                               highlighted_command=lambda event: self.attack_stats((.25, 1), event))
         self.buttons["light_arrow_button"] = Button(
-            self.main_sequence.canvas, 10, 585, length=150, height=35, text="Light Arrow",
+            self.main_sequence.canvas, 10, 555, length=150, height=35, text="Light Arrow",
             command=lambda event: self.attack_chance(.75, .5),
             highlighted_command=lambda event: self.attack_stats((.75, .5), event)
         )
@@ -223,7 +235,7 @@ class FightSequence:
             try:
                 self.enemy.health_bar_meter = self.enemy.health_bar_meter * (self.enemy.health / old_health)
                 self.enemy.health_bar = self.enemy.text_boxes["health_bar_text_box"].make_line(
-                    93, 77, 93 + self.enemy.health_bar_meter, 77, fill="red"
+                    93, 77, 93 + self.enemy.health_bar_meter, 77, fill="red", width=20
                 )
                 if self.main_sequence.text_box.text.count("\n") < 15:
                     self.main_sequence.text_box.update(
@@ -239,6 +251,18 @@ class FightSequence:
                     )
             except ZeroDivisionError:
                 self.end_fight("You Won!")
+                if "melee_button" in self.buttons:
+                    del self.buttons["melee_button"]
+                if "ranged_button" in self.buttons:
+                    del self.buttons["ranged_button"]
+                if "light_button" in self.buttons:
+                    del self.buttons["light_button"]
+                if "medium_button" in self.buttons:
+                    del self.buttons["medium_button"]
+                if "heavy_button" in self.buttons:
+                    del self.buttons["heavy_button"]
+                self.main_sequence.update_all()
+                return
         else:
             if self.main_sequence.text_box.text.split("\n")[-1] == "You missed!" or \
                     self.main_sequence.text_box.text.split("\n")[-1] == f"You missed! x{self.counter}":
@@ -268,7 +292,7 @@ class FightSequence:
                 self.main_sequence.player_health_bar_meter *= (self.main_sequence.player.health / old_health_p)
                 self.main_sequence.health_bar_line =\
                     self.main_sequence.health_bar_text_box.make_line(
-                        93, 698, 93 + self.main_sequence.player_health_bar_meter, 698, fill="red"
+                        93, 673, 93 + self.main_sequence.player_health_bar_meter, 673, fill="red", width=20
                     )
                 if self.main_sequence.text_box.text.count("\n") < 15:
                     self.main_sequence.text_box.update(

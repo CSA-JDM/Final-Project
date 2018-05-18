@@ -133,7 +133,7 @@ class Audio:
         self.root = root
         try:
             self.file = mp3play.load(file)
-        except:
+        except AttributeError:
             self.file = None
         self.loop = True
 
