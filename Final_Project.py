@@ -85,7 +85,8 @@ class App:
         self.buttons["new_game_button"] = Canvas_Objects.Button(self.canvas, x=10, y=110, length=130, height=35,
                                                                 text="New Game", command=lambda event: self.username())
         self.buttons["load_game_button"] = Canvas_Objects.Button(self.canvas, x=10, y=185, length=135, height=35,
-                                                                 text="Load Game", command=None)
+                                                                 text="Load Game",
+                                                                 command=lambda event: self.save_load())
         self.buttons["quit_button"] = Canvas_Objects.Button(self.canvas, x=10, y=260, length=60, height=35, text="Quit",
                                                             command=lambda event: self.root.destroy())
 
@@ -108,7 +109,8 @@ class App:
     def main_sequence(self):
         self.clear_all()
         self.buttons["save_game_button"] = Canvas_Objects.Button(self.canvas, x=927, y=615, length=130, height=35,
-                                                                 text="Save Game")
+                                                                 text="Save Game",
+                                                                 command=lambda event: self.save_load())
         self.main_user_input = MainSequence(
             self, self.canvas, 10, 10, self.text_inputs['username_text_input'].text, self.buttons
         )
@@ -123,8 +125,14 @@ class App:
         self.canvas.unbind_all("<Key>")
         self.canvas.unbind_all("<Return>")
 
-    def save(self):
-        pass
+    def save_load(self):
+        self.save_feature = Canvas_Objects.TextBox(
+            self.canvas, x=510, y=230, length=235, height=100,
+            text="It's a quick game; you'll be able to finish it without this.")
+        self.canvas.update()
+        time.sleep(3)
+        self.canvas.delete(self.save_feature.text_item)
+        self.canvas.delete(self.save_feature.rect_item)
 
 
 class MainSequence:
@@ -378,13 +386,13 @@ class FightSequence:
         Canvas_Objects.TextBox(self.main_sequence.canvas, 460, 510, text="Other Options:")
         self.buttons["fire_button"] = Canvas_Objects.Button(
             self.main_sequence.canvas, 460, 465, length=110, height=35, text="Fire Ball",
-            command=lambda event: self.attack_chance(.75, .5),
-            highlighted_command=lambda event: self.attack_stats((.75, .5), event)
+            command=lambda event: self.attack_chance(.75, 1.25),
+            highlighted_command=lambda event: self.attack_stats((.75, 1.25), event)
         )
         self.buttons["ice_button"] = Canvas_Objects.Button(
             self.main_sequence.canvas, 580, 465, length=115, height=35, text="Ice Shard",
-            command=lambda event: self.attack_chance(.75, .75),
-            highlighted_command=lambda event: self.attack_stats((.75, .75), event)
+            command=lambda event: self.attack_chance(.75, 1.25),
+            highlighted_command=lambda event: self.attack_stats((.75, 1.25), event)
         )
         self.buttons["lightning_button"] = Canvas_Objects.Button(
             self.main_sequence.canvas, 705, 465, length=170, height=35, text="Lightning Bolt",
@@ -708,4 +716,3 @@ class Audio:
 
 if __name__ == "__main__":
     session = App()
-    session.save()
