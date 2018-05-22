@@ -143,10 +143,13 @@ class MainSequence:
         self.y = y
         self.username = username
         self.buttons = buttons
+        """
         self.inventory = {
             "Health Potion": 10,
             "Mana Potion": 10
         }
+        """
+        self.inventory = {}
         self.level = 1
         self.player = Character(self, "Player", self.level)
         self.player_health_bar_meter = 352
@@ -173,7 +176,7 @@ class MainSequence:
                  f"When you feel as though you're strong enough, you can fight the {self.boss_name}\n"
                  "by typing 'fight boss'.\n"
                  "Good luck, and have fun!")
-        self.text_input = Canvas_Objects.TextInput(canvas, x=x, y=y+605, length=900, height=35,
+        self.text_input = Canvas_Objects.TextInput(canvas, x=x, y=y + 605, length=900, height=35,
                                                    command=lambda event: self.check_typed())
 
         self.inventory_text_box = Canvas_Objects.TextBox(self.canvas, x=925, y=10, length=355, height=600,
@@ -183,7 +186,7 @@ class MainSequence:
         item_space = 35
         for item in self.inventory:
             self.inventory_buttons[item] = Canvas_Objects.Button(
-                self.canvas, x=945, y=35+item_space, length=285, height=25, font=("Times New Roman", 15, "normal"),
+                self.canvas, x=945, y=35 + item_space, length=285, height=25, font=("Times New Roman", 15, "normal"),
                 text=f"{item} x{self.inventory[item]}",
                 command=lambda event, item_=item: self.item_options(item_, event)
             )
@@ -197,6 +200,7 @@ class MainSequence:
         self.mana_bar_text_box = Canvas_Objects.TextBox(self.canvas, x=465, y=655, length=445, height=35,
                                                         text="Mana:")
         self.mana_bar_line = self.mana_bar_text_box.make_line(535, 673, 900, 673, fill="blue", width=20)
+        self.player_mana_bar_meter = 365
 
         self.exp_bar_text_box = Canvas_Objects.TextBox(
             self.canvas, x=10, y=695, length=1270, height=20, font=("Times New Roman", 10, "normal"),
@@ -319,7 +323,7 @@ class FightSequence:
         self.counter = 1
         self.enemy = func()
         if self.enemy.type == "Boss":
-            print("success?")
+            pass
         self.main_sequence.text_box.update(y=110, height=500,
                                            text=f"Encounter: Level {self.enemy.level} "
                                                 f"{self.enemy.type} {self.enemy.name}!\n"
@@ -386,7 +390,7 @@ class FightSequence:
         Canvas_Objects.TextBox(self.main_sequence.canvas, 460, 510, text="Other Options:")
         self.buttons["fire_button"] = Canvas_Objects.Button(
             self.main_sequence.canvas, 460, 465, length=110, height=35, text="Fire Ball",
-            command=lambda event: self.attack_chance(.75, 1.25),
+            command=lambda event: self.attack_chance(.75, 100.25),
             highlighted_command=lambda event: self.attack_stats((.75, 1.25), event)
         )
         self.buttons["ice_button"] = Canvas_Objects.Button(
@@ -404,12 +408,13 @@ class FightSequence:
             command=lambda event: [
                 setattr(self.main_sequence.player, "old_health", self.main_sequence.player.health),
                 setattr(self.main_sequence.player, "health",
-                        self.main_sequence.player.health + self.main_sequence.player.attack*.4)
-                if self.main_sequence.player.health + self.main_sequence.player.attack*.4 <= 100
+                        self.main_sequence.player.health + self.main_sequence.player.attack * .4)
+                if self.main_sequence.player.health +
+                self.main_sequence.player.attack * .4 <= self.main_sequence.player.orig_health
                 else None,
                 setattr(self.main_sequence, "player_health_bar_meter",
                         self.main_sequence.player_health_bar_meter *
-                        (self.main_sequence.player.health/self.main_sequence.player.old_health)),
+                        (self.main_sequence.player.health / self.main_sequence.player.old_health)),
                 self.main_sequence.canvas.delete(self.main_sequence.health_bar_line),
                 setattr(self.main_sequence, "health_bar_line", self.main_sequence.health_bar_text_box.make_line(
                     93, 673, 93 + self.main_sequence.player_health_bar_meter, 673, fill="red", width=20
@@ -425,23 +430,30 @@ class FightSequence:
 
     def attack_chance(self, type_chance, type_nerf):
         old_health = self.enemy.health
-        if type_chance*(self.main_sequence.player.agility*.12) > round(random.randint(0, 100) * 0.01, 2):
+        if type_chance * (self.main_sequence.player.agility * .12) > round(random.randint(0, 100) * 0.01, 2):
             if self.enemy.health - round(self.main_sequence.player.attack * type_nerf) > 0:
                 self.enemy.health -= round(self.main_sequence.player.attack * type_nerf)
             else:
                 self.enemy.health = 0
                 self.end_fight("You Won!")
-                self.main_sequence.experience += 1000/self.main_sequence.level
+                self.main_sequence.experience += 1000 / self.main_sequence.level
                 if 60 + self.main_sequence.experience < 1265:
                     self.main_sequence.canvas.delete(self.main_sequence.filling_exp_bar_line)
                     self.main_sequence.filling_exp_bar_line = self.main_sequence.exp_bar_text_box.make_line(
-                        60, 705, 60+self.main_sequence.experience, 705, fill="yellow", width=10
+                        60, 705, 60 + self.main_sequence.experience, 705, fill="yellow", width=10
                     )
                 else:
                     self.main_sequence.level += 1
                     self.main_sequence.player.attack += 3
                     self.main_sequence.player.agility += 2
                     self.main_sequence.player.orig_health += 20
+                    self.main_sequence.player.mana = 100
+                    self.main_sequence.player_mana_bar_meter = 365
+                    self.main_sequence.canvas.delete(self.main_sequence.mana_bar_line)
+                    self.main_sequence.mana_bar_line = \
+                        self.main_sequence.mana_bar_text_box.make_line(
+                            535, 673, 535 + self.main_sequence.player_mana_bar_meter, 673, fill="blue", width=20
+                        )
                     self.main_sequence.player.health = self.main_sequence.player.orig_health
                     self.main_sequence.player_health_bar_meter = 352
                     self.main_sequence.canvas.delete(self.main_sequence.health_bar_line)
@@ -497,7 +509,7 @@ class FightSequence:
             if self.main_sequence.text_box.text.split("\n")[-1] == "You missed!" or \
                     self.main_sequence.text_box.text.split("\n")[-1] == f"You missed! x{self.counter}":
                 self.counter += 1
-                self.main_sequence.text_box.text = "\n".join(self.main_sequence.text_box.text.split("\n")[:-1]) +\
+                self.main_sequence.text_box.text = "\n".join(self.main_sequence.text_box.text.split("\n")[:-1]) + \
                                                    f"\nYou missed! x{self.counter}"
                 self.main_sequence.text_box.update()
             else:
@@ -521,7 +533,7 @@ class FightSequence:
             self.main_sequence.canvas.delete(self.main_sequence.health_bar_line)
             try:
                 self.main_sequence.player_health_bar_meter *= (self.main_sequence.player.health / old_health_p)
-                self.main_sequence.health_bar_line =\
+                self.main_sequence.health_bar_line = \
                     self.main_sequence.health_bar_text_box.make_line(
                         93, 673, 93 + self.main_sequence.player_health_bar_meter, 673, fill="red", width=20
                     )
@@ -541,11 +553,11 @@ class FightSequence:
                 self.end_fight("You Lost!")
         else:
             if self.main_sequence.text_box.text.split("\n")[-1] == f"The {self.enemy.name} missed!" or \
-                    self.main_sequence.text_box.text.split("\n")[-1] ==\
+                self.main_sequence.text_box.text.split("\n")[-1] == \
                     f"The {self.enemy.name} missed! x{self.counter}":
                 self.counter += 1
                 self.main_sequence.text_box.text = "\n".join(
-                    self.main_sequence.text_box.text.split("\n")[:-1]) +\
+                    self.main_sequence.text_box.text.split("\n")[:-1]) + \
                     f"\nThe {self.enemy.name} missed! x{self.counter}"
                 self.main_sequence.text_box.update()
             else:
@@ -565,11 +577,11 @@ class FightSequence:
 
     def attack_stats(self, type_, event, target="Enemy"):
         return Canvas_Objects.TextBox(
-            self.main_sequence.canvas, event.x+5, event.y, 255, 100,
+            self.main_sequence.canvas, event.x + 5, event.y, 255, 100,
             f"Chance to Hit: {round(type_[0]*self.main_sequence.player.agility*.12*100)}%\n"
             f"Target: {target}\n"
             f"Damage: {round(type_[1]*self.main_sequence.player.attack)}"
-            if round(type_[0]*self.main_sequence.player.agility*.12*100) < 100
+            if round(type_[0] * self.main_sequence.player.agility * .12 * 100) < 100
             else "Chance to Hit: 100%\n"
                  f"Target: {target}\n"
                  f"Damage: {round(type_[1]*self.main_sequence.player.attack)}"
@@ -597,7 +609,7 @@ class FightSequence:
                 self.enemy.enemy_game_over(),
                 self.main_sequence.app.root.after_cancel(self.main_sequence.app.time_var)
                 if self.enemy.type == "Boss" else None,
-                setattr(self.main_sequence, "in_fight", False) if self.enemy.type == "Enemy" else None,
+                setattr(self.main_sequence, "in_fight", False),
                 self.main_sequence.inventory_update() if self.enemy.type == "Enemy" else None
             ]
         )
