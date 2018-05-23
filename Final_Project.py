@@ -310,8 +310,7 @@ class MainSequence:
                     setattr(self.player, "old_health", self.player.health),
                     setattr(self.player, "health",
                             self.player.health + self.player.attack * .75)
-                    if self.player.health +
-                       self.player.attack * .75 <= self.player.orig_health
+                    if self.player.health + self.player.attack * .75 <= self.player.orig_health
                     else None,
                     setattr(self, "player_health_bar_meter",
                             self.player_health_bar_meter *
@@ -432,7 +431,7 @@ class FightSequence:
                         535, 673, 535 + self.main_sequence.player_mana_bar_meter, 673, fill="blue", width=20
                     ))
                 ]
-                ],
+                ]if self.main_sequence.player.mana - (self.main_sequence.player.attack * .25) > 0 else None,
             highlighted_command=lambda event: self.attack_stats((.75, 1.25), event)
         )
         self.buttons["ice_button"] = Canvas_Objects.Button(
@@ -451,7 +450,7 @@ class FightSequence:
                         535, 673, 535 + self.main_sequence.player_mana_bar_meter, 673, fill="blue", width=20
                     ))
                 ]
-                ],
+                ]if self.main_sequence.player.mana - (self.main_sequence.player.attack * .25) > 0 else None,
             highlighted_command=lambda event: self.attack_stats((.75, 1.25), event)
         )
         self.buttons["lightning_button"] = Canvas_Objects.Button(
@@ -470,12 +469,24 @@ class FightSequence:
                         535, 673, 535 + self.main_sequence.player_mana_bar_meter, 673, fill="blue", width=20
                     ))
                 ]
-                ],
+                ]if self.main_sequence.player.mana - (self.main_sequence.player.attack * .25) > 0 else None,
             highlighted_command=lambda event: self.attack_stats((.75, 1.25), event)
         )
         self.buttons["heal_button"] = Canvas_Objects.Button(
             self.main_sequence.canvas, 460, 555, length=65, height=35, text="Heal",
             command=lambda event: [
+                [
+                    setattr(self.main_sequence.player, "old_mana", self.main_sequence.player.mana),
+                    setattr(self.main_sequence.player, "mana",
+                            self.main_sequence.player.mana - (self.main_sequence.player.attack * .25)),
+                    setattr(self.main_sequence, "player_mana_bar_meter",
+                            self.main_sequence.player_mana_bar_meter *
+                            (self.main_sequence.player.mana / self.main_sequence.player.old_mana)),
+                    self.main_sequence.canvas.delete(self.main_sequence.mana_bar_line),
+                    setattr(self.main_sequence, "mana_bar_line", self.main_sequence.mana_bar_text_box.make_line(
+                        535, 673, 535 + self.main_sequence.player_mana_bar_meter, 673, fill="blue", width=20
+                    ))
+                ],
                 setattr(self.main_sequence.player, "old_health", self.main_sequence.player.health),
                 setattr(self.main_sequence.player, "health",
                         self.main_sequence.player.health + self.main_sequence.player.attack * .4)
@@ -488,21 +499,8 @@ class FightSequence:
                 self.main_sequence.canvas.delete(self.main_sequence.health_bar_line),
                 setattr(self.main_sequence, "health_bar_line", self.main_sequence.health_bar_text_box.make_line(
                     93, 673, 93 + self.main_sequence.player_health_bar_meter, 673, fill="red", width=20
-                )),
-                [
-                    setattr(self.main_sequence.player, "old_mana", self.main_sequence.player.mana),
-                    setattr(self.main_sequence.player, "mana",
-                            self.main_sequence.player.mana - (self.main_sequence.player.attack * .25))
-                    if self.main_sequence.player.mana - (self.main_sequence.player.attack * .25) > 0 else None,
-                    setattr(self.main_sequence, "player_mana_bar_meter",
-                            self.main_sequence.player_mana_bar_meter *
-                            (self.main_sequence.player.mana / self.main_sequence.player.old_mana)),
-                    self.main_sequence.canvas.delete(self.main_sequence.mana_bar_line),
-                    setattr(self.main_sequence, "mana_bar_line", self.main_sequence.mana_bar_text_box.make_line(
-                        535, 673, 535 + self.main_sequence.player_mana_bar_meter, 673, fill="blue", width=20
-                    ))
-                ]
-            ],
+                ))
+            ]if self.main_sequence.player.mana - (self.main_sequence.player.attack * .25) > 0 else None,
             highlighted_command=lambda event: self.attack_stats((.75, -.4), event, target="Player")
         )
         self.buttons["shield_button"] = Canvas_Objects.Button(
@@ -522,7 +520,7 @@ class FightSequence:
                         535, 673, 535 + self.main_sequence.player_mana_bar_meter, 673, fill="blue", width=20
                     ))
                 ]
-                ],
+                ]if self.main_sequence.player.mana - (self.main_sequence.player.attack * .25) > 0 else None,
             highlighted_command=lambda event: self.attack_stats((.75, 0), event)
         )
 
@@ -626,7 +624,7 @@ class FightSequence:
             if self.main_sequence.player.health - round(self.enemy.attack * current_type[1]) > 0:
                 self.main_sequence.player.health -= round(self.enemy.attack * current_type[1])
             else:
-                self.main_sequence.player.health = 0
+                self.main_sequence.player.health = 100
                 self.end_fight("You Lost!")
             self.main_sequence.canvas.delete(self.main_sequence.health_bar_line)
             try:
@@ -648,6 +646,7 @@ class FightSequence:
                         add=False
                     )
             except ZeroDivisionError:
+                self.main_sequence.player.health = 100
                 self.end_fight("You Lost!")
         else:
             if self.main_sequence.text_box.text.split("\n")[-1] == f"The {self.enemy.name} missed!" or \
@@ -704,7 +703,7 @@ class FightSequence:
                     y=10, height=620,
                     text=end_text
                 ),
-                self.enemy.enemy_game_over(),
+                self.enemy.enemy_game_over(end_text),
                 self.main_sequence.app.root.after_cancel(self.main_sequence.app.time_var)
                 if self.enemy.type == "Boss" else None,
                 setattr(self.main_sequence, "in_fight", False),
@@ -758,7 +757,7 @@ class Enemy(Character):
 
         self.mana_bar = self.text_boxes["mana_bar_text_box"].make_line(535, 77, 900, 77, fill="blue", width=20)
 
-    def enemy_game_over(self):
+    def enemy_game_over(self, *args):
         for x in self.text_boxes:
             self.main_sequence.canvas.delete(self.text_boxes[x].text_item)
             self.main_sequence.canvas.delete(self.text_boxes[x].rect_item)
@@ -794,16 +793,23 @@ class Boss(Character):
 
         self.mana_bar = self.text_boxes["mana_bar_text_box"].make_line(535, 77, 900, 77, fill="blue", width=20)
 
-    def enemy_game_over(self):
-        self.main_sequence.canvas.delete("all")
-        victory = Canvas_Objects.TextBox(
-            self.main_sequence.canvas, 10, 10, 1270, 700, text="YOU WIN!", font=("Times New Roman", 193, "bold"),
-            command=lambda: [
-                self.main_sequence.canvas.bind_all(
-                    "<Button-1>", lambda args: self.main_sequence.canvas.master.destroy()
-                )
-            ]
-        )
+    def enemy_game_over(self, result=None):
+        if result == "You Won!":
+            self.main_sequence.canvas.delete("all")
+            victory = Canvas_Objects.TextBox(
+                self.main_sequence.canvas, 10, 10, 1270, 700, text="YOU WIN!", font=("Times New Roman", 193, "bold"),
+                command=lambda: [
+                    self.main_sequence.canvas.bind_all(
+                        "<Button-1>", lambda args: self.main_sequence.canvas.master.destroy()
+                    )
+                ]
+            )
+        else:
+            for x in self.text_boxes:
+                self.main_sequence.canvas.delete(self.text_boxes[x].text_item)
+                self.main_sequence.canvas.delete(self.text_boxes[x].rect_item)
+            self.main_sequence.canvas.delete(self.health_bar)
+            self.main_sequence.canvas.delete(self.mana_bar)
 
 
 class Audio:
