@@ -2,7 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ece6a703-513d-468c-8caf-a8b94ae4272a" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/Final_Project.py" beforeDir="false" afterPath="$PROJECT_DIR$/Final_Project.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Personal_Modules/mp3play/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Personal_Modules/mp3play/windows.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/FinalProject.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/FinalProject.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Final_Project.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -13,15 +19,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Final_Project.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/Final_Project.py">
+      <file leaf-file-name="In Memoriam.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/In Memoriam.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="68">
-              <caret line="26" lean-forward="true" selection-start-line="26" selection-end-line="26" />
-              <folding>
-                <element signature="n#!!doc" />
-                <element signature="e#70#1200#1" />
-              </folding>
+              <caret line="4" column="69" lean-forward="true" selection-start-line="4" selection-start-column="69" selection-end-line="4" selection-end-column="69" />
             </state>
           </provider>
         </entry>
@@ -127,6 +129,7 @@
         <option value="$PROJECT_DIR$/Personal_Modules/Game_Sequences.py" />
         <option value="$PROJECT_DIR$/venv/Lib/site-packages/mp3play/windows.py" />
         <option value="$PROJECT_DIR$/Final_Project.py" />
+        <option value="$PROJECT_DIR$/In Memoriam.py" />
       </list>
     </option>
   </component>
@@ -148,21 +151,6 @@
               <item name="Final-Project" type="b2602c69:ProjectViewProjectNode" />
               <item name="Final-Project" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="Final-Project" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Final-Project" type="462c0819:PsiDirectoryNode" />
-              <item name="Music" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Final-Project" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Final-Project" type="462c0819:PsiDirectoryNode" />
-              <item name="Personal_Modules" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Final-Project" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Final-Project" type="462c0819:PsiDirectoryNode" />
-              <item name="venv" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
@@ -183,6 +171,20 @@
   <component name="PropertiesComponent">
     <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file://C:/Users/Jacob/Documents/GitHub/Final-Project/Game_Sequences.py" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="PyConsoleOptionsProvider">
+    <option name="myPythonConsoleState">
+      <console-settings module-name="FinalProject" is-module-sdk="true">
+        <option name="myUseModuleSdk" value="true" />
+        <option name="myModuleName" value="FinalProject" />
+      </console-settings>
+    </option>
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\jmeadows\Documents\GitHub\Final-Project\Personal_Modules" />
+      <recent name="C:\Users\jmeadows\Documents\GitHub\Final-Project\venv\Scripts" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -324,11 +326,11 @@
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.50125" side_tool="true" weight="0.30586767" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49875" visible="true" weight="0.30499467" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49875" weight="0.30499467" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Python Console" order="7" weight="0.32943678" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Terminal" order="7" sideWeight="0.499375" weight="0.325887" />
+      <window_info anchor="bottom" id="Terminal" order="7" sideWeight="0.499375" weight="0.32518598" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39947438" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -368,31 +370,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Final_Project.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-253">
-          <caret line="619" lean-forward="true" selection-start-line="619" selection-end-line="619" />
-          <folding>
-            <element signature="n#!!doc" />
-            <element signature="e#70#1200#1" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Final_Project.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="969">
-          <caret line="57" column="19" lean-forward="true" selection-start-line="57" selection-start-column="19" selection-end-line="57" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Final_Project.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2363">
-          <caret line="139" column="23" selection-start-line="139" selection-start-column="23" selection-end-line="139" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Final_Project.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1054">
@@ -488,10 +465,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="791">
           <caret line="230" lean-forward="true" selection-start-line="230" selection-end-line="230" />
-          <folding>
-            <element signature="n#!!doc" />
-            <element signature="e#70#1200#1" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -634,6 +607,26 @@
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/tkinter/__init__.py" />
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python36-32/Lib/turtle.py" />
     <entry file="file://$PROJECT_DIR$/Personal_Modules/Game_Sequences.py" />
+    <entry file="file://$PROJECT_DIR$/venv/Lib/site-packages/mp3play/windows.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="11" column="53" selection-start-line="11" selection-start-column="53" selection-end-line="11" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/venv/Scripts/mp3play/windows.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Personal_Modules/mp3play/windows.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Final_Project.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="14110">
+          <caret line="834" lean-forward="true" selection-start-line="834" selection-end-line="834" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Personal_Modules/Canvas_Objects.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="255">
@@ -665,21 +658,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/venv/Lib/site-packages/mp3play/windows.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="11" column="53" selection-start-line="11" selection-start-column="53" selection-end-line="11" selection-end-column="53" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Final_Project.py">
+    <entry file="file://$PROJECT_DIR$/In Memoriam.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="68">
-          <caret line="26" lean-forward="true" selection-start-line="26" selection-end-line="26" />
-          <folding>
-            <element signature="n#!!doc" />
-            <element signature="e#70#1200#1" />
-          </folding>
+          <caret line="4" column="69" lean-forward="true" selection-start-line="4" selection-start-column="69" selection-end-line="4" selection-end-column="69" />
         </state>
       </provider>
     </entry>
