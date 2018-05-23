@@ -143,13 +143,10 @@ class MainSequence:
         self.y = y
         self.username = username
         self.buttons = buttons
-        """
         self.inventory = {
             "Health Potion": 10,
             "Mana Potion": 10
         }
-        """
-        self.inventory = {}
         self.level = 1
         self.player = Character(self, "Player", self.level)
         self.player_health_bar_meter = 352
@@ -307,7 +304,38 @@ class MainSequence:
                 button.update()
         self.inventory_buttons[f"use_button_{item}"] = Canvas_Objects.Button(
             self.canvas, event.x, event.y, length=40, height=25, font=("Times New Roman", 15, "normal"), text="Use",
-            command=lambda event2: self.inventory_update(text=(item, 1), add=False))
+            command=lambda event2: [
+                self.inventory_update(text=(item, 1), add=False),
+                [
+                    setattr(self.player, "old_health", self.player.health),
+                    setattr(self.player, "health",
+                            self.player.health + self.player.attack * .75)
+                    if self.player.health +
+                       self.player.attack * .75 <= self.player.orig_health
+                    else None,
+                    setattr(self, "player_health_bar_meter",
+                            self.player_health_bar_meter *
+                            (self.player.health / self.player.old_health)),
+                    self.canvas.delete(self.health_bar_line),
+                    setattr(self, "health_bar_line", self.health_bar_text_box.make_line(
+                        93, 673, 93 + self.player_health_bar_meter, 673, fill="red", width=20
+                    ))
+                ] if item == "Health Potion"
+                else [
+                    setattr(self.player, "old_mana", self.player.mana),
+                    setattr(self.player, "mana",
+                            self.player.mana + self.player.attack * .75)
+                    if self.player.mana + self.player.attack * .75 <= 20
+                    else setattr(self.player, "mana", 20),
+                    setattr(self, "player_mana_bar_meter",
+                            self.player_mana_bar_meter *
+                            (self.player.mana / self.player.old_mana)),
+                    self.canvas.delete(self.mana_bar_line),
+                    setattr(self, "mana_bar_line", self.mana_bar_text_box.make_line(
+                        535, 673, 535 + self.player_mana_bar_meter, 673, fill="blue", width=20
+                    ))
+                ]
+            ])
 
     def update_all(self):
         self.canvas.unbind("<Motion>")
@@ -390,17 +418,59 @@ class FightSequence:
         Canvas_Objects.TextBox(self.main_sequence.canvas, 460, 510, text="Other Options:")
         self.buttons["fire_button"] = Canvas_Objects.Button(
             self.main_sequence.canvas, 460, 465, length=110, height=35, text="Fire Ball",
-            command=lambda event: self.attack_chance(.75, 100.25),
+            command=lambda event: [
+                self.attack_chance(.75, 1.25),
+                [
+                    setattr(self.main_sequence.player, "old_mana", self.main_sequence.player.mana),
+                    setattr(self.main_sequence.player, "mana",
+                            self.main_sequence.player.mana - self.main_sequence.player.attack * .25),
+                    setattr(self.main_sequence, "player_mana_bar_meter",
+                            self.main_sequence.player_mana_bar_meter *
+                            (self.main_sequence.player.mana / self.main_sequence.player.old_mana)),
+                    self.main_sequence.canvas.delete(self.main_sequence.mana_bar_line),
+                    setattr(self.main_sequence, "mana_bar_line", self.main_sequence.mana_bar_text_box.make_line(
+                        535, 673, 535 + self.main_sequence.player_mana_bar_meter, 673, fill="blue", width=20
+                    ))
+                ]
+                ],
             highlighted_command=lambda event: self.attack_stats((.75, 1.25), event)
         )
         self.buttons["ice_button"] = Canvas_Objects.Button(
             self.main_sequence.canvas, 580, 465, length=115, height=35, text="Ice Shard",
-            command=lambda event: self.attack_chance(.75, 1.25),
+            command=lambda event: [
+                self.attack_chance(.75, 1.25),
+                [
+                    setattr(self.main_sequence.player, "old_mana", self.main_sequence.player.mana),
+                    setattr(self.main_sequence.player, "mana",
+                            self.main_sequence.player.mana - self.main_sequence.player.attack * .25),
+                    setattr(self.main_sequence, "player_mana_bar_meter",
+                            self.main_sequence.player_mana_bar_meter *
+                            (self.main_sequence.player.mana / self.main_sequence.player.old_mana)),
+                    self.main_sequence.canvas.delete(self.main_sequence.mana_bar_line),
+                    setattr(self.main_sequence, "mana_bar_line", self.main_sequence.mana_bar_text_box.make_line(
+                        535, 673, 535 + self.main_sequence.player_mana_bar_meter, 673, fill="blue", width=20
+                    ))
+                ]
+                ],
             highlighted_command=lambda event: self.attack_stats((.75, 1.25), event)
         )
         self.buttons["lightning_button"] = Canvas_Objects.Button(
             self.main_sequence.canvas, 705, 465, length=170, height=35, text="Lightning Bolt",
-            command=lambda event: self.attack_chance(.75, 1.25),
+            command=lambda event: [
+                self.attack_chance(.75, 1.25),
+                [
+                    setattr(self.main_sequence.player, "old_mana", self.main_sequence.player.mana),
+                    setattr(self.main_sequence.player, "mana",
+                            self.main_sequence.player.mana - self.main_sequence.player.attack * .25),
+                    setattr(self.main_sequence, "player_mana_bar_meter",
+                            self.main_sequence.player_mana_bar_meter *
+                            (self.main_sequence.player.mana / self.main_sequence.player.old_mana)),
+                    self.main_sequence.canvas.delete(self.main_sequence.mana_bar_line),
+                    setattr(self.main_sequence, "mana_bar_line", self.main_sequence.mana_bar_text_box.make_line(
+                        535, 673, 535 + self.main_sequence.player_mana_bar_meter, 673, fill="blue", width=20
+                    ))
+                ]
+                ],
             highlighted_command=lambda event: self.attack_stats((.75, 1.25), event)
         )
         self.buttons["heal_button"] = Canvas_Objects.Button(
@@ -418,13 +488,41 @@ class FightSequence:
                 self.main_sequence.canvas.delete(self.main_sequence.health_bar_line),
                 setattr(self.main_sequence, "health_bar_line", self.main_sequence.health_bar_text_box.make_line(
                     93, 673, 93 + self.main_sequence.player_health_bar_meter, 673, fill="red", width=20
-                ))
+                )),
+                [
+                    setattr(self.main_sequence.player, "old_mana", self.main_sequence.player.mana),
+                    setattr(self.main_sequence.player, "mana",
+                            self.main_sequence.player.mana - (self.main_sequence.player.attack * .25))
+                    if self.main_sequence.player.mana - (self.main_sequence.player.attack * .25) > 0 else None,
+                    setattr(self.main_sequence, "player_mana_bar_meter",
+                            self.main_sequence.player_mana_bar_meter *
+                            (self.main_sequence.player.mana / self.main_sequence.player.old_mana)),
+                    self.main_sequence.canvas.delete(self.main_sequence.mana_bar_line),
+                    setattr(self.main_sequence, "mana_bar_line", self.main_sequence.mana_bar_text_box.make_line(
+                        535, 673, 535 + self.main_sequence.player_mana_bar_meter, 673, fill="blue", width=20
+                    ))
+                ]
             ],
             highlighted_command=lambda event: self.attack_stats((.75, -.4), event, target="Player")
         )
         self.buttons["shield_button"] = Canvas_Objects.Button(
             self.main_sequence.canvas, 535, 555, length=80, height=35, text="Shield",
-            command=lambda event: self.attack_chance(.75, 0),
+            command=lambda event: [
+                self.attack_chance(.75, 0),
+                [
+                    setattr(self.main_sequence.player, "old_mana", self.main_sequence.player.mana),
+                    setattr(self.main_sequence.player, "mana",
+                            self.main_sequence.player.mana - self.main_sequence.player.attack * .25)
+                    if self.main_sequence.player.mana - self.main_sequence.player.attack * .25 > 0 else None,
+                    setattr(self, "player_mana_bar_meter",
+                            self.main_sequence.player_mana_bar_meter *
+                            (self.main_sequence.player.mana / self.main_sequence.player.old_mana)),
+                    self.main_sequence.canvas.delete(self.main_sequence.mana_bar_line),
+                    setattr(self, "mana_bar_line", self.main_sequence.mana_bar_text_box.make_line(
+                        535, 673, 535 + self.main_sequence.player_mana_bar_meter, 673, fill="blue", width=20
+                    ))
+                ]
+                ],
             highlighted_command=lambda event: self.attack_stats((.75, 0), event)
         )
 
@@ -447,7 +545,7 @@ class FightSequence:
                     self.main_sequence.player.attack += 3
                     self.main_sequence.player.agility += 2
                     self.main_sequence.player.orig_health += 20
-                    self.main_sequence.player.mana = 100
+                    self.main_sequence.player.mana = 20
                     self.main_sequence.player_mana_bar_meter = 365
                     self.main_sequence.canvas.delete(self.main_sequence.mana_bar_line)
                     self.main_sequence.mana_bar_line = \
