@@ -1,4 +1,4 @@
-# In Memoriam, Version 1.0
+# In Memoriam, Version 1.1
 Jacob Meadows; 
 4th Period, Computer Programming; 
 April 16th, 2018; 
